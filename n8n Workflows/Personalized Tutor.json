@@ -1,0 +1,591 @@
+{
+  "name": "Personalized Tutor",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -640,
+        -608
+      ],
+      "id": "4f08d51d-add3-4244-87ca-c3762438e1f7",
+      "name": "Telegram Trigger",
+      "webhookId": "dca498db-708c-4a05-9682-062cd74d20c4",
+      "credentials": {
+        "telegramApi": {
+          "id": "xUZt42hx3uN6fMT5",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.document.file_name }}",
+                    "rightValue": ".pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "17024766-a638-40d2-ae84-5506797609e1"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "=pdf"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "f5cf8e47-6bfb-4c2e-bd58-4afe1a45d9bb",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "9c2dc4c8-910b-42e6-b3ae-c7e999f7e1d3",
+                    "leftValue": "={{ $json.message.document.file_name }}",
+                    "rightValue": ".PDF",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PDF"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -400,
+        -608
+      ],
+      "id": "b881870d-423d-4c7d-b3a2-32519e3f9258",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.document.file_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        -976
+      ],
+      "id": "f5258da9-5d27-4919-a375-d66410fddc84",
+      "name": "Get a file",
+      "webhookId": "4ce1cfca-2571-4baf-983c-7731d39692a9",
+      "credentials": {
+        "telegramApi": {
+          "id": "xUZt42hx3uN6fMT5",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "learner1",
+          "mode": "list",
+          "cachedResultName": "learner1"
+        },
+        "embeddingBatchSize": 300,
+        "options": {
+          "pineconeNamespace": "Book"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        448,
+        -976
+      ],
+      "id": "252137a1-3aa5-48a2-829c-4256b5fbf0a5",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "Hl8kyPHROykMg5jf",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "dimensions": 512
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        384,
+        -768
+      ],
+      "id": "16e2ce80-a255-424a-9e69-90a75ed1926d",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "ZzycOh1yrzW0UJ2C",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        624,
+        -768
+      ],
+      "id": "9df61cca-83c4-4340-bb00-66a4afab995c",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- Configuration ---\n// Set your desired output format here. This is now set to PDF.\nconst targetMimeType = 'application/pdf';\nconst targetExtension = 'pdf';\n// --------------------\n\n\n// Loop through all items passed to this node.\nfor (const item of items) {\n  // In n8n, binary data is stored in the 'binary' property of an item.\n  // 'data' is the default key for the first binary property.\n  const binaryData = item.binary.data;\n\n  // If there is no binary data on this item, skip it and move to the next one.\n  if (!binaryData) {\n    continue;\n  }\n\n  // Get the original filename from the binary object's metadata.\n  const originalFileName = binaryData.fileName || 'file';\n\n  // Create the new filename with the correct extension.\n  // This logic finds the last dot and replaces the extension.\n  const baseName = originalFileName.substring(0, originalFileName.lastIndexOf('.')) || originalFileName;\n  const newFileName = `${baseName}.${targetExtension}`;\n\n  // THIS IS THE CORE LOGIC:\n  // We are directly modifying the metadata properties of the existing binary object.\n  // The underlying file/data is not changed, only how n8n labels it.\n  binaryData.fileName = newFileName;\n  binaryData.mimeType = targetMimeType;\n\n  // For consistency, we also update the corresponding JSON data.\n  // This helps if subsequent nodes look at the JSON part of the item.\n  item.json.fileName = newFileName;\n  item.json.mimeType = targetMimeType;\n}\n\n// Return the modified items to be passed to the next node in the workflow.\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        -976
+      ],
+      "id": "632f5dd4-995f-44b7-a2f4-bca31c8c275b",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "content": "                                                 PDf store to the pinecode",
+        "height": 432,
+        "width": 1088,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -96,
+        -1056
+      ],
+      "typeVersion": 1,
+      "id": "7115d8a1-4507-46c6-871e-0b488e1f138a",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=answer the question from the pinecone vector database based on user query:\n{{ $json.message.text }}\n",
+        "options": {
+          "systemMessage": "You are a helpful assistant. Who answers questions from the Pinecone vector database according to user query."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        176,
+        -464
+      ],
+      "id": "dedff3d5-0b40-4b9e-b27e-6f4bcb3c3fa4",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        64,
+        -256
+      ],
+      "id": "b4f9e063-63f1-4147-be71-72302dc4c66c",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ZzycOh1yrzW0UJ2C",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.message.chat.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        240,
+        -240
+      ],
+      "id": "3d14a7e2-0d87-441f-8fbd-df14a32ead9f",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Work with the pinecone vector database",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "learner1",
+          "mode": "list",
+          "cachedResultName": "learner1"
+        },
+        "topK": 5,
+        "options": {
+          "pineconeNamespace": "Book"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        384,
+        -256
+      ],
+      "id": "1d033abb-7bf1-4133-9c64-39c0f3ad0cfc",
+      "name": "Pinecone Vector Store1",
+      "credentials": {
+        "pineconeApi": {
+          "id": "Hl8kyPHROykMg5jf",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "dimensions": 512
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        -112
+      ],
+      "id": "85b96e1b-e4d4-479b-b860-bf158163ea8d",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "ZzycOh1yrzW0UJ2C",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        912,
+        -464
+      ],
+      "id": "7da2f746-7f07-4ba5-b0d2-4034ee08fb8e",
+      "name": "Send a text message",
+      "webhookId": "80320634-3541-4077-8fed-5373986f3878",
+      "credentials": {
+        "telegramApi": {
+          "id": "xUZt42hx3uN6fMT5",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "                                       Answer from Pinecone Vector database",
+        "height": 576,
+        "width": 912,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -80,
+        -544
+      ],
+      "typeVersion": 1,
+      "id": "997a17c4-2667-4e94-8bc2-50b3d73e4f79",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        880,
+        -976
+      ],
+      "id": "1acb1550-a8d7-4a13-9fbe-13c55521f2e9",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=File: {{ $('Telegram Trigger').item.json.message.document.file_name }}  was Uploaded successfully.",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1152,
+        -960
+      ],
+      "id": "0bb22a84-207c-48d6-ae03-a917a7124aa2",
+      "name": "Send a text message1",
+      "webhookId": "80320634-3541-4077-8fed-5373986f3878",
+      "credentials": {
+        "telegramApi": {
+          "id": "xUZt42hx3uN6fMT5",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message1": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6033519c-ed5f-4f34-ab9e-fb101922914f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a77a4d1e1bfe09748ac31aab88a2996bf336125788583debd6e741b66fd38176"
+  },
+  "id": "Ws2E7yPOqAm4sGtg",
+  "tags": []
+}

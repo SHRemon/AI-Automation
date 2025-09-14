@@ -1,0 +1,6134 @@
+{
+  "name": "sales system",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Data Scrapper",
+        "formDescription": "Enter the below data",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Location",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Niche",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -1184,
+        -64
+      ],
+      "id": "4a17a3d9-010d-4061-aa18-6fda8b0c2d03",
+      "name": "On form submission",
+      "webhookId": "4361c63e-939f-454a-afdf-c32bf8b81b84"
+    },
+    {
+      "parameters": {
+        "amount": 12
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -768,
+        -48
+      ],
+      "id": "a75748b5-3e45-422d-9695-5fe036d63fb3",
+      "name": "Wait",
+      "webhookId": "56a266ef-38c1-4866-b5e8-60ba60544268"
+    },
+    {
+      "parameters": {
+        "url": "https://api.apify.com/v2/acts/compass~crawler-google-places/runs/last",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -560,
+        -64
+      ],
+      "id": "b28f66f0-e950-4bfc-a363-7c7ccfe4a614",
+      "name": "get status",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "5PIzRyEJsoOWFyH1",
+          "name": "Apify Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "96e8c252-204f-4aeb-9ecd-8738e44d3f55",
+              "leftValue": "={{ $json.data.status }}",
+              "rightValue": "SUCCEEDED",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -352,
+        -64
+      ],
+      "id": "8844fb1d-93d3-401e-9432-f3248e4a0fae",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": " https://api.apify.com/v2/acts/compass~crawler-google-places/runs",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"includeWebResults\": false,\n    \"language\": \"en\",\n    \"locationQuery\": \"{{ $json.Location }}, USA\",\n    \"maxCrawledPlacesPerSearch\": 10,\n    \"maxImages\": 0,\n    \"maximumLeadsEnrichmentRecords\": 0,\n    \"scrapeContacts\": false,\n    \"scrapeDirectories\": false,\n    \"scrapeImageAuthors\": false,\n    \"scrapePlaceDetailPage\": false,\n    \"scrapeReviewsPersonalData\": true,\n    \"scrapeTableReservationProvider\": false,\n    \"searchStringsArray\": [\n        \"{{ $json.Niche }}\"\n    ],\n    \"skipClosedPlaces\": false\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -976,
+        -64
+      ],
+      "id": "1bea5585-c013-40cf-89dd-784e1a58dff2",
+      "name": "map scrapper",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "5PIzRyEJsoOWFyH1",
+          "name": "Apify Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.apify.com/v2/acts/compass~crawler-google-places/runs/last/dataset/items",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -128,
+        -80
+      ],
+      "id": "541369e9-0877-4ca8-aa5a-fc3f0bd3ff85",
+      "name": "Get map Data",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "5PIzRyEJsoOWFyH1",
+          "name": "Apify Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.apify.com/v2/acts/6sigmag~fast-website-content-crawler/runs/last",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        272,
+        208
+      ],
+      "id": "f563783b-b3ff-4637-a533-024ae27b1f15",
+      "name": "get status1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "5PIzRyEJsoOWFyH1",
+          "name": "Apify Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/6sigmag~fast-website-content-crawler/runs",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"startUrls\": [\n        \"leathergarden.com\"\n    ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -144,
+        208
+      ],
+      "id": "9671991d-afe6-47f8-bb9a-0993b3ebf802",
+      "name": "Web scrapper",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "5PIzRyEJsoOWFyH1",
+          "name": "Apify Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 12
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        80,
+        224
+      ],
+      "id": "d47a1deb-fbe2-4b95-8bb8-0879f585ca6f",
+      "name": "Wait..",
+      "webhookId": "56a266ef-38c1-4866-b5e8-60ba60544268"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "96e8c252-204f-4aeb-9ecd-8738e44d3f55",
+              "leftValue": "={{ $json.data.status }}",
+              "rightValue": "SUCCEEDED",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        208
+      ],
+      "id": "35655f40-62be-42ce-aaa9-bf7b8670412d",
+      "name": "If.."
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        80,
+        -80
+      ],
+      "id": "f4878c3f-f23b-4016-811e-34d58f9b959d",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "url": "https://api.apify.com/v2/acts/6sigmag~fast-website-content-crawler/runs/last/dataset/items",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        704,
+        192
+      ],
+      "id": "f8dceee8-4afa-429f-8581-0b9a65e45097",
+      "name": "Get web Data",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "5PIzRyEJsoOWFyH1",
+          "name": "Apify Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are expert at extracting data from website details.\nYou will find founder/CEO name, email, and socal links like (facebook, linkedin, instagram) in the below json format:\n\nOutput:\n{\n  \"Founder/CEO\": \"NAme of the founder or CEO\",\n   \"Email\": \"Email here\",\n    \"Facebook\": \"facebook link\",\n    \"Linkedin\": \"linkedin link\",\n    \"Instagram\": \"Instagram link\"\n\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        880,
+        192
+      ],
+      "id": "14bf8729-7fa1-4308-b3c6-fec87d621404",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ZzycOh1yrzW0UJ2C",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "On form submission": [
+      {
+        "json": {
+          "Location": "New York",
+          "Niche": "Plumbers",
+          "submittedAt": "2025-08-06T01:37:30.540-04:00",
+          "formMode": "test"
+        }
+      }
+    ],
+    "Get web Data": [
+      {
+        "json": {
+          "title": "Bayhouse",
+          "description": "Relaxed bayside tavern with outdoor seats offering  American fare including many seafood offerings.",
+          "price": "$$",
+          "categoryName": "Bar & grill",
+          "address": "155-57 Bayview Ave, Rosedale, NY 11422",
+          "neighborhood": "Rosedale",
+          "street": "155-57 Bayview Ave",
+          "city": "Rosedale",
+          "postalCode": "11422",
+          "state": "New York",
+          "countryCode": "US",
+          "website": "http://www.bayhousebar.com/",
+          "phone": "(718) 527-7575",
+          "phoneUnformatted": "+17185277575",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 40.6373624,
+            "lng": -73.7450449
+          },
+          "totalScore": 4.3,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJ6Sar1tVlwokRsPZv6QCT_mI",
+          "categories": [
+            "Bar & grill"
+          ],
+          "fid": "0x89c265d5d6ab26e9:0x62fe9300e96ff6b0",
+          "cid": "7133300491927156400",
+          "reviewsCount": 1470,
+          "imagesCount": 1346,
+          "imageCategories": [],
+          "scrapedAt": "2025-08-06T05:44:24.433Z",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "12 to 10 PM"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "12 to 10 PM"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "12 to 10 PM"
+            },
+            {
+              "day": "Thursday",
+              "hours": "12 to 10 PM"
+            },
+            {
+              "day": "Friday",
+              "hours": "12 to 10 PM"
+            },
+            {
+              "day": "Saturday",
+              "hours": "12 to 10 PM"
+            },
+            {
+              "day": "Sunday",
+              "hours": "12 to 10 PM"
+            }
+          ],
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "Outdoor seating": true
+              },
+              {
+                "Delivery": true
+              },
+              {
+                "Takeout": true
+              },
+              {
+                "Dine-in": true
+              }
+            ],
+            "Highlights": [
+              {
+                "Fast service": true
+              },
+              {
+                "Great beer selection": true
+              },
+              {
+                "Great cocktails": true
+              },
+              {
+                "Great wine list": true
+              },
+              {
+                "Sports": true
+              }
+            ],
+            "Popular for": [
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Solo dining": true
+              }
+            ],
+            "Accessibility": [
+              {
+                "Wheelchair accessible entrance": true
+              },
+              {
+                "Wheelchair accessible parking lot": true
+              },
+              {
+                "Wheelchair accessible restroom": true
+              },
+              {
+                "Wheelchair accessible seating": true
+              }
+            ],
+            "Offerings": [
+              {
+                "Alcohol": true
+              },
+              {
+                "Beer": true
+              },
+              {
+                "Cocktails": true
+              },
+              {
+                "Coffee": true
+              },
+              {
+                "Comfort food": true
+              },
+              {
+                "Food": true
+              },
+              {
+                "Food at bar": true
+              },
+              {
+                "Happy hour drinks": true
+              },
+              {
+                "Happy hour food": true
+              },
+              {
+                "Hard liquor": true
+              },
+              {
+                "Late-night food": true
+              },
+              {
+                "Quick bite": true
+              },
+              {
+                "Small plates": true
+              },
+              {
+                "Wine": true
+              }
+            ],
+            "Dining options": [
+              {
+                "Brunch": true
+              },
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Dessert": true
+              },
+              {
+                "Seating": true
+              },
+              {
+                "Table service": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Bar onsite": true
+              },
+              {
+                "Restroom": true
+              }
+            ],
+            "Atmosphere": [
+              {
+                "Casual": true
+              },
+              {
+                "Cozy": true
+              },
+              {
+                "Quiet": true
+              },
+              {
+                "Romantic": true
+              },
+              {
+                "Trending": true
+              },
+              {
+                "Trendy": true
+              }
+            ],
+            "Crowd": [
+              {
+                "Groups": true
+              },
+              {
+                "Tourists": true
+              }
+            ],
+            "Planning": [
+              {
+                "Accepts reservations": true
+              }
+            ],
+            "Payments": [
+              {
+                "Credit cards": true
+              },
+              {
+                "Debit cards": true
+              },
+              {
+                "NFC mobile payments": true
+              },
+              {
+                "Credit cards": true
+              }
+            ],
+            "Children": [
+              {
+                "Good for kids": true
+              },
+              {
+                "High chairs": true
+              }
+            ],
+            "Parking": [
+              {
+                "Free parking lot": true
+              },
+              {
+                "Free street parking": true
+              },
+              {
+                "Usually plenty of parking": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=Bayhouse&query_place_id=ChIJ6Sar1tVlwokRsPZv6QCT_mI",
+          "searchPageUrl": "https://www.google.com/maps/search/restaurant/@40.59321488768417,-73.70638644734598,13z?hl=en",
+          "searchString": "restaurant",
+          "language": "en",
+          "rank": 16,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nq6HjCwh57-xemnpr7AXDauO2-JoUhRIFKtpqkVEdWbxw4JhrEji5Arb-rkK3SCGp0uQscUlYuB4rnh9rX6tPUSJcrlL92T13ORJY8owDSiCzqjuQOGfUUHxlYiAdnuvV5DE7I=w408-h305-k-no",
+          "kgmid": "/g/1td72y4r"
+        }
+      },
+      {
+        "json": {
+          "title": "Michael's Restaurant",
+          "description": "Cozy, brick-walled diner offering large portions of breakfast fare, burgers & more all day & night.",
+          "price": "$10–20",
+          "categoryName": "Diner",
+          "address": "33-17 Broadway, Astoria, NY 11106",
+          "neighborhood": "Astoria",
+          "street": "33-17 Broadway",
+          "city": "Astoria",
+          "postalCode": "11106",
+          "state": "New York",
+          "countryCode": "US",
+          "website": "https://michaelsrestaurantny.com/",
+          "phone": "(718) 726-7474",
+          "phoneUnformatted": "+17187267474",
+          "claimThisBusiness": true,
+          "location": {
+            "lat": 40.7610412,
+            "lng": -73.9230643
+          },
+          "totalScore": 4.3,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJtw7DHjpfwokR4wTyYwENdBk",
+          "categories": [
+            "Diner",
+            "Breakfast restaurant",
+            "Sandwich shop"
+          ],
+          "fid": "0x89c25f3a1ec30eb7:0x19740d0163f204e3",
+          "cid": "1834105247869568227",
+          "reviewsCount": 695,
+          "imagesCount": 270,
+          "imageCategories": [],
+          "scrapedAt": "2025-08-06T05:44:25.346Z",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Thursday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Friday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Saturday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Sunday",
+              "hours": "Open 24 hours"
+            }
+          ],
+          "additionalOpeningHours": {
+            "Delivery": [
+              {
+                "day": "Monday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Tuesday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Wednesday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Thursday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Friday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Saturday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Sunday",
+                "hours": "Open 24 hours"
+              }
+            ]
+          },
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "No-contact delivery": true
+              },
+              {
+                "Delivery": true
+              },
+              {
+                "Takeout": true
+              },
+              {
+                "Dine-in": true
+              }
+            ],
+            "Highlights": [
+              {
+                "Fast service": true
+              },
+              {
+                "Great coffee": true
+              },
+              {
+                "Great dessert": true
+              },
+              {
+                "Serves local specialty": true
+              }
+            ],
+            "Popular for": [
+              {
+                "Breakfast": true
+              },
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Solo dining": true
+              }
+            ],
+            "Accessibility": [
+              {
+                "Wheelchair accessible entrance": true
+              },
+              {
+                "Wheelchair accessible restroom": true
+              },
+              {
+                "Wheelchair accessible seating": true
+              },
+              {
+                "Wheelchair accessible parking lot": false
+              }
+            ],
+            "Offerings": [
+              {
+                "Alcohol": true
+              },
+              {
+                "Beer": true
+              },
+              {
+                "Cocktails": true
+              },
+              {
+                "Coffee": true
+              },
+              {
+                "Comfort food": true
+              },
+              {
+                "Hard liquor": true
+              },
+              {
+                "Healthy options": true
+              },
+              {
+                "Late-night food": true
+              },
+              {
+                "Quick bite": true
+              },
+              {
+                "Small plates": true
+              },
+              {
+                "Wine": true
+              }
+            ],
+            "Dining options": [
+              {
+                "Breakfast": true
+              },
+              {
+                "Brunch": true
+              },
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Dessert": true
+              },
+              {
+                "Seating": true
+              },
+              {
+                "Table service": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Bar onsite": true
+              },
+              {
+                "Restroom": true
+              }
+            ],
+            "Atmosphere": [
+              {
+                "Casual": true
+              },
+              {
+                "Cozy": true
+              }
+            ],
+            "Crowd": [
+              {
+                "Groups": true
+              },
+              {
+                "Tourists": true
+              }
+            ],
+            "Payments": [
+              {
+                "Credit cards": true
+              },
+              {
+                "Debit cards": true
+              },
+              {
+                "NFC mobile payments": true
+              },
+              {
+                "Credit cards": true
+              }
+            ],
+            "Children": [
+              {
+                "Good for kids": true
+              },
+              {
+                "High chairs": true
+              },
+              {
+                "Kids' menu": true
+              }
+            ],
+            "Parking": [
+              {
+                "Free street parking": true
+              },
+              {
+                "Paid street parking": true
+              }
+            ],
+            "Pets": [
+              {
+                "Dogs allowed outside": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=Michael's%20Restaurant&query_place_id=ChIJtw7DHjpfwokR4wTyYwENdBk",
+          "searchPageUrl": "https://www.google.com/maps/search/restaurant/@40.80099311231582,-73.84296222367298,13z?hl=en",
+          "searchString": "restaurant",
+          "language": "en",
+          "rank": 1,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AC9h4noXCj8EcX1DvkWZ7OA6XsJKyEK16-t1zR6iIVds8OilFwpQqpH-NKgtQq507c0z3Hw6W5qDN9DLHQxhePNARmhzZMaTCEd-FQ7KW_qDJ3ibRCZP95h95H_TNZ4EsvmBuwVQ4bq3NA=w426-h240-k-no",
+          "kgmid": "/g/1tdkylwg"
+        }
+      },
+      {
+        "json": {
+          "title": "El Maguey Mexican Restaurant",
+          "price": "$$",
+          "categoryName": "Mexican restaurant",
+          "address": "83-28 Northern Blvd, Jackson Heights, NY 11372",
+          "neighborhood": "Jackson Heights",
+          "street": "83-28 Northern Blvd",
+          "city": "Jackson Heights",
+          "postalCode": "11372",
+          "state": "New York",
+          "countryCode": "US",
+          "website": "https://www.facebook.com/ElMagueyRestaurantNYC/",
+          "phone": "(929) 522-0562",
+          "phoneUnformatted": "+19295220562",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 40.7555924,
+            "lng": -73.8836222
+          },
+          "totalScore": 4.3,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJsTWrraZfwokRZGJ6_md9Bg4",
+          "categories": [
+            "Mexican restaurant",
+            "Brunch restaurant",
+            "Karaoke bar",
+            "Restaurant",
+            "Taco restaurant"
+          ],
+          "fid": "0x89c25fa6adab35b1:0xe067d67fe7a6264",
+          "cid": "1010633051995791972",
+          "reviewsCount": 969,
+          "imagesCount": 770,
+          "imageCategories": [],
+          "scrapedAt": "2025-08-06T05:44:25.346Z",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "12 PM to 4 AM"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "12 PM to 4 AM"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "12 PM to 4 AM"
+            },
+            {
+              "day": "Thursday",
+              "hours": "12 PM to 4 AM"
+            },
+            {
+              "day": "Friday",
+              "hours": "12 PM to 4 AM"
+            },
+            {
+              "day": "Saturday",
+              "hours": "12 PM to 4 AM"
+            },
+            {
+              "day": "Sunday",
+              "hours": "12 PM to 4 AM"
+            }
+          ],
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "Outdoor seating": true
+              },
+              {
+                "No-contact delivery": true
+              },
+              {
+                "Delivery": true
+              },
+              {
+                "Takeout": true
+              },
+              {
+                "Dine-in": true
+              }
+            ],
+            "Highlights": [
+              {
+                "Fast service": true
+              },
+              {
+                "Great cocktails": true
+              },
+              {
+                "Sports": true
+              }
+            ],
+            "Popular for": [
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Solo dining": true
+              }
+            ],
+            "Accessibility": [
+              {
+                "Wheelchair accessible entrance": true
+              },
+              {
+                "Wheelchair accessible restroom": true
+              },
+              {
+                "Wheelchair accessible seating": true
+              }
+            ],
+            "Offerings": [
+              {
+                "Alcohol": true
+              },
+              {
+                "Beer": true
+              },
+              {
+                "Cocktails": true
+              },
+              {
+                "Coffee": true
+              },
+              {
+                "Comfort food": true
+              },
+              {
+                "Happy hour drinks": true
+              },
+              {
+                "Happy hour food": true
+              },
+              {
+                "Hard liquor": true
+              },
+              {
+                "Healthy options": true
+              },
+              {
+                "Late-night food": true
+              },
+              {
+                "Quick bite": true
+              },
+              {
+                "Small plates": true
+              },
+              {
+                "Wine": true
+              }
+            ],
+            "Dining options": [
+              {
+                "Brunch": true
+              },
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Dessert": true
+              },
+              {
+                "Seating": true
+              },
+              {
+                "Table service": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Bar onsite": true
+              },
+              {
+                "Restroom": true
+              }
+            ],
+            "Atmosphere": [
+              {
+                "Casual": true
+              },
+              {
+                "Cozy": true
+              },
+              {
+                "Trendy": true
+              }
+            ],
+            "Crowd": [
+              {
+                "Groups": true
+              },
+              {
+                "Tourists": true
+              }
+            ],
+            "Planning": [
+              {
+                "Accepts reservations": true
+              }
+            ],
+            "Payments": [
+              {
+                "Credit cards": true
+              },
+              {
+                "Debit cards": true
+              },
+              {
+                "NFC mobile payments": true
+              },
+              {
+                "Credit cards": true
+              }
+            ],
+            "Children": [
+              {
+                "Good for kids": true
+              },
+              {
+                "High chairs": true
+              },
+              {
+                "Kids' menu": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=El%20Maguey%20Mexican%20Restaurant&query_place_id=ChIJsTWrraZfwokRZGJ6_md9Bg4",
+          "searchPageUrl": "https://www.google.com/maps/search/restaurant/@40.80099311231582,-73.84296222367298,13z?hl=en",
+          "searchString": "restaurant",
+          "language": "en",
+          "rank": 2,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/p/AF1QipOW82uHcFKpcGMxW60d2o-Ap_XNi0Dj7dCjcb3o=w426-h240-k-no",
+          "kgmid": "/g/11c0ywj2x3"
+        }
+      },
+      {
+        "json": {
+          "title": "Roy's Restaurant Bar",
+          "description": "Relaxed dining spot featuring familiar Latin American & American meat & seafood dishes.",
+          "price": "$10–20",
+          "categoryName": "Dominican restaurant",
+          "address": "880 E Tremont Ave, Bronx, NY 10460",
+          "neighborhood": "West Bronx",
+          "street": "880 E Tremont Ave",
+          "city": "Bronx",
+          "postalCode": "10460",
+          "state": "New York",
+          "countryCode": "US",
+          "website": "https://www.roysrestaurantny.com/",
+          "phone": "(917) 471-8937",
+          "phoneUnformatted": "+19174718937",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 40.8427224,
+            "lng": -73.8859136
+          },
+          "totalScore": 4.1,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJp5qaq4v0wokRJ1a9RJ6cBWQ",
+          "categories": [
+            "Dominican restaurant",
+            "Bar",
+            "Latin American restaurant",
+            "Spanish restaurant"
+          ],
+          "fid": "0x89c2f48bab9a9aa7:0x64059c9e44bd5627",
+          "cid": "7207338982248371751",
+          "reviewsCount": 954,
+          "imagesCount": 850,
+          "imageCategories": [],
+          "scrapedAt": "2025-08-06T05:44:25.347Z",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "9 AM to 4 AM"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "9 AM to 2 AM"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "9 AM to 4 AM"
+            },
+            {
+              "day": "Thursday",
+              "hours": "9 AM to 4 AM"
+            },
+            {
+              "day": "Friday",
+              "hours": "9 AM to 4 AM"
+            },
+            {
+              "day": "Saturday",
+              "hours": "9 AM to 4 AM"
+            },
+            {
+              "day": "Sunday",
+              "hours": "9 AM to 4 AM"
+            }
+          ],
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "No-contact delivery": true
+              },
+              {
+                "Delivery": true
+              },
+              {
+                "Takeout": true
+              },
+              {
+                "Dine-in": true
+              }
+            ],
+            "Highlights": [
+              {
+                "Fast service": true
+              },
+              {
+                "Great beer selection": true
+              },
+              {
+                "Great cocktails": true
+              },
+              {
+                "Great coffee": true
+              },
+              {
+                "Great dessert": true
+              },
+              {
+                "Great wine list": true
+              },
+              {
+                "Live music": true
+              },
+              {
+                "Sports": true
+              }
+            ],
+            "Popular for": [
+              {
+                "Breakfast": true
+              },
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Solo dining": true
+              }
+            ],
+            "Accessibility": [
+              {
+                "Wheelchair accessible entrance": true
+              },
+              {
+                "Wheelchair accessible restroom": true
+              },
+              {
+                "Wheelchair accessible seating": true
+              },
+              {
+                "Wheelchair accessible parking lot": false
+              }
+            ],
+            "Offerings": [
+              {
+                "Alcohol": true
+              },
+              {
+                "Beer": true
+              },
+              {
+                "Cocktails": true
+              },
+              {
+                "Coffee": true
+              },
+              {
+                "Comfort food": true
+              },
+              {
+                "Happy hour drinks": true
+              },
+              {
+                "Happy hour food": true
+              },
+              {
+                "Hard liquor": true
+              },
+              {
+                "Healthy options": true
+              },
+              {
+                "Private dining room": true
+              },
+              {
+                "Quick bite": true
+              },
+              {
+                "Small plates": true
+              },
+              {
+                "Wine": true
+              }
+            ],
+            "Dining options": [
+              {
+                "Breakfast": true
+              },
+              {
+                "Brunch": true
+              },
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Catering": true
+              },
+              {
+                "Counter service": true
+              },
+              {
+                "Dessert": true
+              },
+              {
+                "Seating": true
+              },
+              {
+                "Table service": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Bar onsite": true
+              },
+              {
+                "Gender-neutral restroom": true
+              },
+              {
+                "Restroom": true
+              },
+              {
+                "Wi-Fi": true
+              },
+              {
+                "Free Wi-Fi": true
+              }
+            ],
+            "Atmosphere": [
+              {
+                "Casual": true
+              },
+              {
+                "Cozy": true
+              },
+              {
+                "Trendy": true
+              }
+            ],
+            "Crowd": [
+              {
+                "Family-friendly": true
+              },
+              {
+                "Groups": true
+              },
+              {
+                "Tourists": true
+              }
+            ],
+            "Planning": [
+              {
+                "Accepts reservations": true
+              }
+            ],
+            "Payments": [
+              {
+                "Credit cards": true
+              },
+              {
+                "Debit cards": true
+              },
+              {
+                "NFC mobile payments": true
+              },
+              {
+                "Credit cards": true
+              }
+            ],
+            "Children": [
+              {
+                "Good for kids": true
+              },
+              {
+                "High chairs": true
+              },
+              {
+                "Kids' menu": true
+              }
+            ],
+            "Parking": [
+              {
+                "Free street parking": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=Roy's%20Restaurant%20Bar&query_place_id=ChIJp5qaq4v0wokRJ1a9RJ6cBWQ",
+          "searchPageUrl": "https://www.google.com/maps/search/restaurant/@40.80099311231582,-73.84296222367298,13z?hl=en",
+          "searchString": "restaurant",
+          "language": "en",
+          "rank": 3,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/p/AF1QipOS8tvvK83DThM7_a-Ozh5LKhzV4815yBiEbtKU=w408-h327-k-no",
+          "kgmid": "/g/1ptxrr_r7"
+        }
+      },
+      {
+        "json": {
+          "title": "Truth Restaurant Astoria",
+          "price": "$50–100",
+          "categoryName": "Asian fusion restaurant",
+          "address": "27-35 21st St, Astoria, NY 11102",
+          "neighborhood": "Astoria",
+          "street": "27-35 21st St",
+          "city": "Astoria",
+          "postalCode": "11102",
+          "state": "New York",
+          "countryCode": "US",
+          "website": "https://www.truthastoria.com/",
+          "phone": "(347) 527-2199",
+          "phoneUnformatted": "+13475272199",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 40.77112,
+            "lng": -73.926401
+          },
+          "totalScore": 4.5,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJx9TFWhBfwokRjqfzfLhojJo",
+          "categories": [
+            "Asian fusion restaurant",
+            "Asian restaurant",
+            "Restaurant"
+          ],
+          "fid": "0x89c25f105ac5d4c7:0x9a8c68b87cf3a78e",
+          "cid": "11136391120160008078",
+          "reviewsCount": 187,
+          "imagesCount": 244,
+          "imageCategories": [],
+          "scrapedAt": "2025-08-06T05:44:25.347Z",
+          "reserveTableUrl": "https://www.google.com/maps/reserve/v/dine/c/hK_VTSbV6Vs?source=pa&opi=79508299&hl=en-US&gei=t-uSaJPPI46HptQPk8iQsQs&sourceurl=https://www.google.com/service/MapsSearchService/Search?hl%3Den%26authuser%3D0%26gl%3Dus%26q%3Drestaurant%26tbm%3Dmap",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "4 PM to 2 AM"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "4 PM to 2 AM"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "4 PM to 2 AM"
+            },
+            {
+              "day": "Thursday",
+              "hours": "4 PM to 2 AM"
+            },
+            {
+              "day": "Friday",
+              "hours": "4 PM to 2 AM"
+            },
+            {
+              "day": "Saturday",
+              "hours": "4 PM to 2 AM"
+            },
+            {
+              "day": "Sunday",
+              "hours": "12 PM to 2 AM"
+            }
+          ],
+          "additionalOpeningHours": {
+            "Takeout": [
+              {
+                "day": "Monday",
+                "hours": "4–11:30 PM"
+              },
+              {
+                "day": "Tuesday",
+                "hours": "4–11:30 PM"
+              },
+              {
+                "day": "Wednesday",
+                "hours": "4–11:30 PM"
+              },
+              {
+                "day": "Thursday",
+                "hours": "4–11:30 PM"
+              },
+              {
+                "day": "Friday",
+                "hours": "4–11:30 PM"
+              },
+              {
+                "day": "Saturday",
+                "hours": "4–11:30 PM"
+              },
+              {
+                "day": "Sunday",
+                "hours": "12–11:30 PM"
+              }
+            ],
+            "Online service hours": [
+              {
+                "day": "Monday",
+                "hours": "4:30–11:30 PM"
+              },
+              {
+                "day": "Tuesday",
+                "hours": "4:30–11:30 PM"
+              },
+              {
+                "day": "Wednesday",
+                "hours": "4:30–11:30 PM"
+              },
+              {
+                "day": "Thursday",
+                "hours": "4:30–11:30 PM"
+              },
+              {
+                "day": "Friday",
+                "hours": "4:30–11:30 PM"
+              },
+              {
+                "day": "Saturday",
+                "hours": "4:30–11:30 PM"
+              },
+              {
+                "day": "Sunday",
+                "hours": "12–11:30 PM"
+              }
+            ],
+            "Brunch": [
+              {
+                "day": "Monday",
+                "hours": "Closed"
+              },
+              {
+                "day": "Tuesday",
+                "hours": "Closed"
+              },
+              {
+                "day": "Wednesday",
+                "hours": "Closed"
+              },
+              {
+                "day": "Thursday",
+                "hours": "Closed"
+              },
+              {
+                "day": "Friday",
+                "hours": "Closed"
+              },
+              {
+                "day": "Saturday",
+                "hours": "Closed"
+              },
+              {
+                "day": "Sunday",
+                "hours": "12–4 PM"
+              }
+            ],
+            "Happy hours": [
+              {
+                "day": "Monday",
+                "hours": "4–7 PM"
+              },
+              {
+                "day": "Tuesday",
+                "hours": "4–7 PM"
+              },
+              {
+                "day": "Wednesday",
+                "hours": "4–7 PM"
+              },
+              {
+                "day": "Thursday",
+                "hours": "4–7 PM"
+              },
+              {
+                "day": "Friday",
+                "hours": "Closed"
+              },
+              {
+                "day": "Saturday",
+                "hours": "Closed"
+              },
+              {
+                "day": "Sunday",
+                "hours": "Closed"
+              }
+            ]
+          },
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "Delivery": true
+              },
+              {
+                "Onsite services": true
+              },
+              {
+                "Takeout": true
+              },
+              {
+                "Dine-in": true
+              }
+            ],
+            "Highlights": [
+              {
+                "Fast service": true
+              },
+              {
+                "Great cocktails": true
+              },
+              {
+                "Great wine list": true
+              },
+              {
+                "Live music": true
+              }
+            ],
+            "Popular for": [
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Solo dining": true
+              }
+            ],
+            "Accessibility": [
+              {
+                "Wheelchair accessible entrance": true
+              },
+              {
+                "Wheelchair accessible restroom": true
+              },
+              {
+                "Wheelchair accessible seating": true
+              },
+              {
+                "Wheelchair accessible parking lot": false
+              }
+            ],
+            "Offerings": [
+              {
+                "Alcohol": true
+              },
+              {
+                "Beer": true
+              },
+              {
+                "Cocktails": true
+              },
+              {
+                "Coffee": true
+              },
+              {
+                "Comfort food": true
+              },
+              {
+                "Happy hour drinks": true
+              },
+              {
+                "Happy hour food": true
+              },
+              {
+                "Hard liquor": true
+              },
+              {
+                "Late-night food": true
+              },
+              {
+                "Private dining room": true
+              },
+              {
+                "Small plates": true
+              },
+              {
+                "Vegan options": true
+              },
+              {
+                "Vegetarian options": true
+              },
+              {
+                "Wine": true
+              }
+            ],
+            "Dining options": [
+              {
+                "Brunch": true
+              },
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Dessert": true
+              },
+              {
+                "Seating": true
+              },
+              {
+                "Table service": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Bar onsite": true
+              },
+              {
+                "Restroom": true
+              }
+            ],
+            "Atmosphere": [
+              {
+                "Casual": true
+              },
+              {
+                "Cozy": true
+              },
+              {
+                "Trendy": true
+              }
+            ],
+            "Crowd": [
+              {
+                "Family-friendly": true
+              },
+              {
+                "Groups": true
+              },
+              {
+                "LGBTQ+ friendly": true
+              },
+              {
+                "Transgender safespace": true
+              }
+            ],
+            "Planning": [
+              {
+                "Dinner reservations recommended": true
+              },
+              {
+                "Accepts reservations": true
+              }
+            ],
+            "Payments": [
+              {
+                "Credit cards": true
+              },
+              {
+                "Debit cards": true
+              },
+              {
+                "NFC mobile payments": true
+              },
+              {
+                "Credit cards": true
+              }
+            ],
+            "Parking": [
+              {
+                "Free street parking": true
+              },
+              {
+                "Paid street parking": true
+              },
+              {
+                "Usually somewhat difficult to find a space": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=Truth%20Restaurant%20Astoria&query_place_id=ChIJx9TFWhBfwokRjqfzfLhojJo",
+          "searchPageUrl": "https://www.google.com/maps/search/restaurant/@40.80099311231582,-73.84296222367298,13z?hl=en",
+          "searchString": "restaurant",
+          "language": "en",
+          "rank": 4,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqur3uzQDqL08zEPxWa_LwCu-9Nh-A4aeDvqyRInCQI4bdz1hm_6mLysxjSq2Viiv7f7Ma7HF1i2OBfn21dhlsqVBbZFpoTHfhdYGy8efrKMn-5GOyybuGP2OYtUWI93ojhLjJo=w408-h544-k-no",
+          "kgmid": "/g/11kh_kg0cn"
+        }
+      },
+      {
+        "json": {
+          "title": "D'antigua Restaurant Bar",
+          "description": "Latin American lounge & restaurant offering live entertainment & TV sports in relaxed surroundings.",
+          "price": "$$",
+          "categoryName": "Restaurant",
+          "address": "84-16 Northern Blvd, Jackson Heights, NY 11372",
+          "neighborhood": "Jackson Heights",
+          "street": "84-16 Northern Blvd",
+          "city": "Jackson Heights",
+          "postalCode": "11372",
+          "state": "New York",
+          "countryCode": "US",
+          "phone": "(718) 779-0128",
+          "phoneUnformatted": "+17187790128",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 40.7556763,
+            "lng": -73.8829005
+          },
+          "totalScore": 4.4,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJ75mU_6NfwokRRmijMqQ2u38",
+          "categories": [
+            "Restaurant",
+            "Bar",
+            "Karaoke",
+            "Live music venue"
+          ],
+          "fid": "0x89c25fa3ff9499ef:0x7fbb36a432a36846",
+          "cid": "9204010342313846854",
+          "reviewsCount": 915,
+          "imagesCount": 538,
+          "imageCategories": [],
+          "scrapedAt": "2025-08-06T05:44:25.347Z",
+          "reserveTableUrl": "https://www.google.com/maps/reserve/v/dine/c/YroBVo8uYE4?source=pa&opi=79508299&hl=en-US&gei=t-uSaJPPI46HptQPk8iQsQs&sourceurl=https://www.google.com/service/MapsSearchService/Search?hl%3Den%26authuser%3D0%26gl%3Dus%26q%3Drestaurant%26tbm%3Dmap",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "Closed"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "4 PM to 4 AM"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "4 PM to 4 AM"
+            },
+            {
+              "day": "Thursday",
+              "hours": "4 PM to 4 AM"
+            },
+            {
+              "day": "Friday",
+              "hours": "4 PM to 4 AM"
+            },
+            {
+              "day": "Saturday",
+              "hours": "4 PM to 4 AM"
+            },
+            {
+              "day": "Sunday",
+              "hours": "4 PM to 4 AM"
+            }
+          ],
+          "additionalOpeningHours": {
+            "Takeout": [
+              {
+                "day": "Monday",
+                "hours": "Closed"
+              },
+              {
+                "day": "Tuesday",
+                "hours": "4 PM–12 AM"
+              },
+              {
+                "day": "Wednesday",
+                "hours": "4 PM–12 AM"
+              },
+              {
+                "day": "Thursday",
+                "hours": "4 PM–12 AM"
+              },
+              {
+                "day": "Friday",
+                "hours": "4 PM–1 AM"
+              },
+              {
+                "day": "Saturday",
+                "hours": "4 PM–1 AM"
+              },
+              {
+                "day": "Sunday",
+                "hours": "4 PM–12 AM"
+              }
+            ]
+          },
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "Curbside pickup": true
+              },
+              {
+                "No-contact delivery": true
+              },
+              {
+                "Delivery": true
+              },
+              {
+                "Takeout": true
+              },
+              {
+                "Dine-in": true
+              }
+            ],
+            "Highlights": [
+              {
+                "Fast service": true
+              },
+              {
+                "Great beer selection": true
+              },
+              {
+                "Great cocktails": true
+              },
+              {
+                "Live music": true
+              },
+              {
+                "Sports": true
+              }
+            ],
+            "Popular for": [
+              {
+                "Dinner": true
+              },
+              {
+                "Solo dining": true
+              }
+            ],
+            "Accessibility": [
+              {
+                "Wheelchair accessible entrance": true
+              },
+              {
+                "Wheelchair accessible restroom": true
+              },
+              {
+                "Wheelchair accessible seating": true
+              }
+            ],
+            "Offerings": [
+              {
+                "Alcohol": true
+              },
+              {
+                "Beer": true
+              },
+              {
+                "Cocktails": true
+              },
+              {
+                "Coffee": true
+              },
+              {
+                "Comfort food": true
+              },
+              {
+                "Happy hour drinks": true
+              },
+              {
+                "Happy hour food": true
+              },
+              {
+                "Hard liquor": true
+              },
+              {
+                "Late-night food": true
+              },
+              {
+                "Quick bite": true
+              },
+              {
+                "Small plates": true
+              },
+              {
+                "Vegetarian options": true
+              },
+              {
+                "Wine": true
+              }
+            ],
+            "Dining options": [
+              {
+                "Brunch": true
+              },
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Catering": true
+              },
+              {
+                "Counter service": true
+              },
+              {
+                "Dessert": true
+              },
+              {
+                "Seating": true
+              },
+              {
+                "Table service": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Bar onsite": true
+              },
+              {
+                "Restroom": true
+              },
+              {
+                "Wi-Fi": true
+              },
+              {
+                "Free Wi-Fi": true
+              }
+            ],
+            "Atmosphere": [
+              {
+                "Casual": true
+              },
+              {
+                "Cozy": true
+              },
+              {
+                "Trendy": true
+              }
+            ],
+            "Crowd": [
+              {
+                "Family-friendly": true
+              },
+              {
+                "Groups": true
+              },
+              {
+                "LGBTQ+ friendly": true
+              },
+              {
+                "Tourists": true
+              },
+              {
+                "Transgender safespace": true
+              }
+            ],
+            "Planning": [
+              {
+                "Accepts reservations": true
+              }
+            ],
+            "Payments": [
+              {
+                "Credit cards": true
+              },
+              {
+                "Debit cards": true
+              },
+              {
+                "NFC mobile payments": true
+              },
+              {
+                "Credit cards": true
+              }
+            ],
+            "Children": [
+              {
+                "Good for kids": true
+              },
+              {
+                "High chairs": true
+              },
+              {
+                "Kids' menu": true
+              }
+            ],
+            "Parking": [
+              {
+                "Paid street parking": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=D'antigua%20Restaurant%20Bar&query_place_id=ChIJ75mU_6NfwokRRmijMqQ2u38",
+          "searchPageUrl": "https://www.google.com/maps/search/restaurant/@40.80099311231582,-73.84296222367298,13z?hl=en",
+          "searchString": "restaurant",
+          "language": "en",
+          "rank": 5,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nrXan1a9rVRLaL9iaJhsUGnCRoFl_Q31iG3fUeoFJJmN1Mtkc5ZozvQRom2C4qGwJwkmolmRnQC7DEXsFF4en3UYEiAhDdf60-V_NfThE5uPt1qIElch869d5nFvswrvwMHqsQ=w408-h272-k-no",
+          "kgmid": "/g/1tf03dfd"
+        }
+      },
+      {
+        "json": {
+          "title": "Fabrika",
+          "price": "$$",
+          "categoryName": "Pan-Latin restaurant",
+          "address": "80-24 Northern Blvd, Jackson Heights, NY 11372",
+          "neighborhood": "Jackson Heights",
+          "street": "80-24 Northern Blvd",
+          "city": "Jackson Heights",
+          "postalCode": "11372",
+          "state": "New York",
+          "countryCode": "US",
+          "website": "https://www.fabrikany.com/",
+          "phone": "(929) 300-3135",
+          "phoneUnformatted": "+19293003135",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 40.7552294,
+            "lng": -73.8865204
+          },
+          "totalScore": 4.7,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJF-Yh-hNfwokRNge04jMeKcE",
+          "categories": [
+            "Pan-Latin restaurant",
+            "Delivery Restaurant",
+            "Takeout Restaurant",
+            "Restaurant"
+          ],
+          "fid": "0x89c25f13fa21e617:0xc1291e33e2b40736",
+          "cid": "13918689331560843062",
+          "reviewsCount": 673,
+          "imagesCount": 2846,
+          "imageCategories": [],
+          "scrapedAt": "2025-08-06T05:44:25.347Z",
+          "reserveTableUrl": "https://www.google.com/maps/reserve/v/dine/c/RTBJPHi7nnc?source=pa&opi=79508299&hl=en-US&gei=t-uSaJPPI46HptQPk8iQsQs&sourceurl=https://www.google.com/service/MapsSearchService/Search?hl%3Den%26authuser%3D0%26gl%3Dus%26q%3Drestaurant%26tbm%3Dmap",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "Closed"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "5 PM to 1 AM"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "5 PM to 1 AM"
+            },
+            {
+              "day": "Thursday",
+              "hours": "5 PM to 2 AM"
+            },
+            {
+              "day": "Friday",
+              "hours": "4 PM to 2 AM"
+            },
+            {
+              "day": "Saturday",
+              "hours": "4 PM to 2 AM"
+            },
+            {
+              "day": "Sunday",
+              "hours": "3 PM to 12 AM"
+            }
+          ],
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "Outdoor seating": true
+              },
+              {
+                "Curbside pickup": true
+              },
+              {
+                "No-contact delivery": true
+              },
+              {
+                "Delivery": true
+              },
+              {
+                "Takeout": true
+              },
+              {
+                "Dine-in": true
+              }
+            ],
+            "Highlights": [
+              {
+                "Fast service": true
+              },
+              {
+                "Great beer selection": true
+              },
+              {
+                "Great cocktails": true
+              }
+            ],
+            "Popular for": [
+              {
+                "Dinner": true
+              },
+              {
+                "Solo dining": true
+              }
+            ],
+            "Accessibility": [
+              {
+                "Wheelchair accessible entrance": true
+              },
+              {
+                "Wheelchair accessible restroom": true
+              },
+              {
+                "Wheelchair accessible seating": true
+              }
+            ],
+            "Offerings": [
+              {
+                "Alcohol": true
+              },
+              {
+                "Beer": true
+              },
+              {
+                "Cocktails": true
+              },
+              {
+                "Coffee": true
+              },
+              {
+                "Comfort food": true
+              },
+              {
+                "Happy hour drinks": true
+              },
+              {
+                "Happy hour food": true
+              },
+              {
+                "Hard liquor": true
+              },
+              {
+                "Late-night food": true
+              },
+              {
+                "Small plates": true
+              },
+              {
+                "Vegan options": true
+              },
+              {
+                "Vegetarian options": true
+              },
+              {
+                "Wine": true
+              }
+            ],
+            "Dining options": [
+              {
+                "Brunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Counter service": true
+              },
+              {
+                "Dessert": true
+              },
+              {
+                "Seating": true
+              },
+              {
+                "Table service": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Bar onsite": true
+              },
+              {
+                "Restroom": true
+              }
+            ],
+            "Atmosphere": [
+              {
+                "Casual": true
+              },
+              {
+                "Cozy": true
+              },
+              {
+                "Trendy": true
+              }
+            ],
+            "Crowd": [
+              {
+                "Groups": true
+              }
+            ],
+            "Planning": [
+              {
+                "Dinner reservations recommended": true
+              },
+              {
+                "Accepts reservations": true
+              }
+            ],
+            "Payments": [
+              {
+                "Credit cards": true
+              },
+              {
+                "Debit cards": true
+              },
+              {
+                "NFC mobile payments": true
+              },
+              {
+                "Credit cards": true
+              }
+            ],
+            "Children": [
+              {
+                "High chairs": true
+              }
+            ],
+            "Parking": [
+              {
+                "Free street parking": true
+              },
+              {
+                "Paid street parking": true
+              },
+              {
+                "Usually somewhat difficult to find a space": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=Fabrika&query_place_id=ChIJF-Yh-hNfwokRNge04jMeKcE",
+          "searchPageUrl": "https://www.google.com/maps/search/restaurant/@40.80099311231582,-73.84296222367298,13z?hl=en",
+          "searchString": "restaurant",
+          "language": "en",
+          "rank": 6,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nreYdzz_nCQVrkDuKkpDFW8a963kNjp6XWl7hcc6BT_7NcIJE1w-ieCV5S_p1IcrBpVu-PtScwZA1glyQXyAamBDPCzQep3TylX5rPyiN9DqJ8ttHRez_VFG_MGKty9kmTx8jcrKw=w417-h240-k-no",
+          "kgmid": "/g/11rz9ff893"
+        }
+      },
+      {
+        "json": {
+          "title": "Sanfords",
+          "description": "This eatery offers twists on New American comfort fare in a contemporary updated-diner setting.",
+          "price": "$30–50",
+          "categoryName": "New American restaurant",
+          "address": "30-13 Broadway, Astoria, NY 11106",
+          "neighborhood": "Astoria",
+          "street": "30-13 Broadway",
+          "city": "Astoria",
+          "postalCode": "11106",
+          "state": "New York",
+          "countryCode": "US",
+          "website": "http://www.sanfordsnyc.com/",
+          "phone": "(718) 932-9569",
+          "phoneUnformatted": "+17189329569",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 40.7622946,
+            "lng": -73.9255437
+          },
+          "totalScore": 4.4,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJK6yDNjdfwokR_I3wR_rkS8s",
+          "categories": [
+            "New American restaurant",
+            "Brunch restaurant",
+            "Cocktail bar"
+          ],
+          "fid": "0x89c25f373683ac2b:0xcb4be4fa47f08dfc",
+          "cid": "14649053976552574460",
+          "reviewsCount": 2472,
+          "imagesCount": 2415,
+          "imageCategories": [],
+          "scrapedAt": "2025-08-06T05:44:25.347Z",
+          "reserveTableUrl": "https://www.google.com/maps/reserve/v/dine/c/43udRsA2ABU?source=pa&opi=79508299&hl=en-US&gei=t-uSaJPPI46HptQPk8iQsQs&sourceurl=https://www.google.com/service/MapsSearchService/Search?hl%3Den%26authuser%3D0%26gl%3Dus%26q%3Drestaurant%26tbm%3Dmap",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "10 AM to 12 AM"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "10 AM to 12 AM"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "10 AM to 12 AM"
+            },
+            {
+              "day": "Thursday",
+              "hours": "10 AM to 12 AM"
+            },
+            {
+              "day": "Friday",
+              "hours": "10 AM to 12 AM"
+            },
+            {
+              "day": "Saturday",
+              "hours": "10 AM to 12 AM"
+            },
+            {
+              "day": "Sunday",
+              "hours": "10 AM to 12 AM"
+            }
+          ],
+          "additionalOpeningHours": {
+            "Happy hours": [
+              {
+                "day": "Monday",
+                "hours": "4–6 PM"
+              },
+              {
+                "day": "Tuesday",
+                "hours": "4–6 PM"
+              },
+              {
+                "day": "Wednesday",
+                "hours": "4–6 PM"
+              },
+              {
+                "day": "Thursday",
+                "hours": "4–6 PM"
+              },
+              {
+                "day": "Friday",
+                "hours": "4–6 PM"
+              },
+              {
+                "day": "Saturday",
+                "hours": "4–6 PM"
+              },
+              {
+                "day": "Sunday",
+                "hours": "4–6 PM"
+              }
+            ]
+          },
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "No-contact delivery": true
+              },
+              {
+                "Delivery": true
+              },
+              {
+                "Takeout": true
+              },
+              {
+                "Dine-in": true
+              }
+            ],
+            "Highlights": [
+              {
+                "Fast service": true
+              },
+              {
+                "Great cocktails": true
+              },
+              {
+                "Great coffee": true
+              },
+              {
+                "Great dessert": true
+              },
+              {
+                "Great tea selection": true
+              }
+            ],
+            "Popular for": [
+              {
+                "Breakfast": true
+              },
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Solo dining": true
+              }
+            ],
+            "Accessibility": [
+              {
+                "Wheelchair accessible entrance": true
+              },
+              {
+                "Wheelchair accessible restroom": true
+              },
+              {
+                "Wheelchair accessible seating": true
+              },
+              {
+                "Wheelchair accessible parking lot": false
+              }
+            ],
+            "Offerings": [
+              {
+                "Alcohol": true
+              },
+              {
+                "Beer": true
+              },
+              {
+                "Cocktails": true
+              },
+              {
+                "Coffee": true
+              },
+              {
+                "Comfort food": true
+              },
+              {
+                "Happy hour drinks": true
+              },
+              {
+                "Happy hour food": true
+              },
+              {
+                "Hard liquor": true
+              },
+              {
+                "Healthy options": true
+              },
+              {
+                "Late-night food": true
+              },
+              {
+                "Organic dishes": true
+              },
+              {
+                "Private dining room": true
+              },
+              {
+                "Quick bite": true
+              },
+              {
+                "Small plates": true
+              },
+              {
+                "Vegan options": true
+              },
+              {
+                "Vegetarian options": true
+              },
+              {
+                "Wine": true
+              }
+            ],
+            "Dining options": [
+              {
+                "Breakfast": true
+              },
+              {
+                "Brunch": true
+              },
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Catering": true
+              },
+              {
+                "Counter service": true
+              },
+              {
+                "Dessert": true
+              },
+              {
+                "Seating": true
+              },
+              {
+                "Table service": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Bar onsite": true
+              },
+              {
+                "Gender-neutral restroom": true
+              },
+              {
+                "Restroom": true
+              },
+              {
+                "Wi-Fi": true
+              },
+              {
+                "Free Wi-Fi": true
+              }
+            ],
+            "Atmosphere": [
+              {
+                "Casual": true
+              },
+              {
+                "Cozy": true
+              },
+              {
+                "Trendy": true
+              },
+              {
+                "Upscale": true
+              }
+            ],
+            "Crowd": [
+              {
+                "Family-friendly": true
+              },
+              {
+                "Groups": true
+              },
+              {
+                "LGBTQ+ friendly": true
+              },
+              {
+                "Tourists": true
+              }
+            ],
+            "Planning": [
+              {
+                "Lunch reservations recommended": true
+              },
+              {
+                "Dinner reservations recommended": true
+              },
+              {
+                "Accepts reservations": true
+              }
+            ],
+            "Payments": [
+              {
+                "Credit cards": true
+              },
+              {
+                "Debit cards": true
+              },
+              {
+                "Credit cards": true
+              }
+            ],
+            "Children": [
+              {
+                "Good for kids": true
+              },
+              {
+                "High chairs": true
+              }
+            ],
+            "Parking": [
+              {
+                "Paid parking lot": true
+              },
+              {
+                "Paid street parking": true
+              },
+              {
+                "Usually difficult to find a space": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=Sanfords&query_place_id=ChIJK6yDNjdfwokR_I3wR_rkS8s",
+          "searchPageUrl": "https://www.google.com/maps/search/restaurant/@40.80099311231582,-73.84296222367298,13z?hl=en",
+          "searchString": "restaurant",
+          "language": "en",
+          "rank": 7,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/p/AF1QipO3bcb2iwPv4zZrcCBOZoMBz9Ss5hLXlPnpdbVm=w408-h271-k-no",
+          "kgmid": "/g/1tg51bn5"
+        }
+      },
+      {
+        "json": {
+          "title": "Bani Restaurant",
+          "price": "$30–50",
+          "categoryName": "Latin American restaurant",
+          "address": "1056 Bronx River Ave, Bronx, NY 10472",
+          "neighborhood": "East Bronx",
+          "street": "1056 Bronx River Ave",
+          "city": "Bronx",
+          "postalCode": "10472",
+          "state": "New York",
+          "countryCode": "US",
+          "phone": "(718) 618-7937",
+          "phoneUnformatted": "+17186187937",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 40.8250885,
+            "lng": -73.8828887
+          },
+          "totalScore": 4,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJF8lk4_v0wokRk4HS31h72fE",
+          "categories": [
+            "Latin American restaurant"
+          ],
+          "fid": "0x89c2f4fbe364c917:0xf1d97b58dfd28193",
+          "cid": "17427095854729298323",
+          "reviewsCount": 247,
+          "imagesCount": 56,
+          "imageCategories": [],
+          "scrapedAt": "2025-08-06T05:44:25.347Z",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "Closed"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "7 PM to 4 AM"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "7 PM to 4 AM"
+            },
+            {
+              "day": "Thursday",
+              "hours": "7 PM to 4 AM"
+            },
+            {
+              "day": "Friday",
+              "hours": "7 PM to 4 AM"
+            },
+            {
+              "day": "Saturday",
+              "hours": "7 PM to 4 AM"
+            },
+            {
+              "day": "Sunday",
+              "hours": "6 PM to 4 AM"
+            }
+          ],
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "Curbside pickup": true
+              },
+              {
+                "No-contact delivery": true
+              },
+              {
+                "Delivery": true
+              },
+              {
+                "Drive-through": true
+              },
+              {
+                "Takeout": true
+              },
+              {
+                "Dine-in": true
+              }
+            ],
+            "Highlights": [
+              {
+                "Fast service": true
+              },
+              {
+                "Great beer selection": true
+              },
+              {
+                "Great cocktails": true
+              },
+              {
+                "Live music": true
+              }
+            ],
+            "Popular for": [
+              {
+                "Lunch": true
+              }
+            ],
+            "Accessibility": [
+              {
+                "Wheelchair accessible seating": true
+              }
+            ],
+            "Offerings": [
+              {
+                "Alcohol": true
+              },
+              {
+                "Beer": true
+              },
+              {
+                "Cocktails": true
+              },
+              {
+                "Coffee": true
+              },
+              {
+                "Comfort food": true
+              },
+              {
+                "Hard liquor": true
+              },
+              {
+                "Small plates": true
+              },
+              {
+                "Wine": true
+              }
+            ],
+            "Dining options": [
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Seating": true
+              },
+              {
+                "Table service": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Bar onsite": true
+              },
+              {
+                "Restroom": true
+              }
+            ],
+            "Atmosphere": [
+              {
+                "Casual": true
+              },
+              {
+                "Cozy": true
+              },
+              {
+                "Trendy": true
+              }
+            ],
+            "Crowd": [
+              {
+                "Groups": true
+              }
+            ],
+            "Planning": [
+              {
+                "Accepts reservations": true
+              }
+            ],
+            "Payments": [
+              {
+                "Credit cards": true
+              },
+              {
+                "Debit cards": true
+              },
+              {
+                "NFC mobile payments": true
+              },
+              {
+                "Credit cards": true
+              }
+            ],
+            "Children": [
+              {
+                "High chairs": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=Bani%20Restaurant&query_place_id=ChIJF8lk4_v0wokRk4HS31h72fE",
+          "searchPageUrl": "https://www.google.com/maps/search/restaurant/@40.80099311231582,-73.84296222367298,13z?hl=en",
+          "searchString": "restaurant",
+          "language": "en",
+          "rank": 8,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AC9h4npTfp8be8tXSg2Y1MdZwmltfvUr-QLUdTYYl1dfuVD7iV9GZYEB4LiiumCpp56bf1rrVlxAub2FPk8uLB5CrusfUcLUwPGjDMDnqfQr1IWI69QtslM7ErkPWG-xKSGg4d93LWA=w408-h544-k-no",
+          "kgmid": "/g/1vs1stjn"
+        }
+      },
+      {
+        "json": {
+          "title": "El Paso Restaurant Bar",
+          "price": null,
+          "categoryName": "Bar & grill",
+          "address": "35-64 95th St, Jackson Heights, NY 11372",
+          "neighborhood": "Jackson Heights",
+          "street": "35-64 95th St",
+          "city": "Jackson Heights",
+          "postalCode": "11372",
+          "state": "New York",
+          "countryCode": "US",
+          "phone": "(347) 624-1470",
+          "phoneUnformatted": "+13476241470",
+          "claimThisBusiness": true,
+          "location": {
+            "lat": 40.7513755,
+            "lng": -73.8724363
+          },
+          "totalScore": 4.1,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJARby-V1fwokRVzEAw03psRw",
+          "categories": [
+            "Bar & grill"
+          ],
+          "fid": "0x89c25f5df9f21601:0x1cb1e94dc3003157",
+          "cid": "2067690224133091671",
+          "reviewsCount": 45,
+          "imagesCount": 8,
+          "imageCategories": [],
+          "scrapedAt": "2025-08-06T05:44:25.347Z",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "2 PM to 4 AM"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "2 PM to 4 AM"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "2 PM to 4 AM"
+            },
+            {
+              "day": "Thursday",
+              "hours": "2 PM to 4 AM"
+            },
+            {
+              "day": "Friday",
+              "hours": "2 PM to 4 AM"
+            },
+            {
+              "day": "Saturday",
+              "hours": "2 PM to 4 AM"
+            },
+            {
+              "day": "Sunday",
+              "hours": "2 PM to 4 AM"
+            }
+          ],
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "Takeout": true
+              },
+              {
+                "Dine-in": true
+              }
+            ],
+            "Highlights": [
+              {
+                "Fast service": true
+              },
+              {
+                "Great cocktails": true
+              }
+            ],
+            "Offerings": [
+              {
+                "Alcohol": true
+              },
+              {
+                "Beer": true
+              },
+              {
+                "Cocktails": true
+              },
+              {
+                "Food": true
+              },
+              {
+                "Food at bar": true
+              },
+              {
+                "Hard liquor": true
+              },
+              {
+                "Wine": true
+              }
+            ],
+            "Dining options": [
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Table service": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Bar onsite": true
+              },
+              {
+                "Restroom": true
+              }
+            ],
+            "Atmosphere": [
+              {
+                "Casual": true
+              }
+            ],
+            "Crowd": [
+              {
+                "Groups": true
+              }
+            ],
+            "Planning": [
+              {
+                "Accepts reservations": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=El%20Paso%20Restaurant%20Bar&query_place_id=ChIJARby-V1fwokRVzEAw03psRw",
+          "searchPageUrl": "https://www.google.com/maps/search/restaurant/@40.80099311231582,-73.84296222367298,13z?hl=en",
+          "searchString": "restaurant",
+          "language": "en",
+          "rank": 9,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AC9h4noKQZ0gh3Kc8JSx4nHAKYIStR7Sh91SWXexX353dJvHgrM4wXDcC-YYk-wNQxFiAo_tTHGFRWrJGj8PR-KkptvJdsVSKrq0b3XfzlnZ97N0RcS28W81I-j4q4TIQlFqQ3E__S0Mjg=w424-h240-k-no",
+          "kgmid": "/g/11n0jpcdn_"
+        }
+      }
+    ],
+    "Get map Data": [
+      {
+        "json": {
+          "title": "Bayhouse",
+          "description": "Relaxed bayside tavern with outdoor seats offering  American fare including many seafood offerings.",
+          "price": "$$",
+          "categoryName": "Bar & grill",
+          "address": "155-57 Bayview Ave, Rosedale, NY 11422",
+          "neighborhood": "Rosedale",
+          "street": "155-57 Bayview Ave",
+          "city": "Rosedale",
+          "postalCode": "11422",
+          "state": "New York",
+          "countryCode": "US",
+          "website": "http://www.bayhousebar.com/",
+          "phone": "(718) 527-7575",
+          "phoneUnformatted": "+17185277575",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 40.6373624,
+            "lng": -73.7450449
+          },
+          "totalScore": 4.3,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJ6Sar1tVlwokRsPZv6QCT_mI",
+          "categories": [
+            "Bar & grill"
+          ],
+          "fid": "0x89c265d5d6ab26e9:0x62fe9300e96ff6b0",
+          "cid": "7133300491927156400",
+          "reviewsCount": 1470,
+          "imagesCount": 1346,
+          "imageCategories": [],
+          "scrapedAt": "2025-08-06T05:44:24.433Z",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "12 to 10 PM"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "12 to 10 PM"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "12 to 10 PM"
+            },
+            {
+              "day": "Thursday",
+              "hours": "12 to 10 PM"
+            },
+            {
+              "day": "Friday",
+              "hours": "12 to 10 PM"
+            },
+            {
+              "day": "Saturday",
+              "hours": "12 to 10 PM"
+            },
+            {
+              "day": "Sunday",
+              "hours": "12 to 10 PM"
+            }
+          ],
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "Outdoor seating": true
+              },
+              {
+                "Delivery": true
+              },
+              {
+                "Takeout": true
+              },
+              {
+                "Dine-in": true
+              }
+            ],
+            "Highlights": [
+              {
+                "Fast service": true
+              },
+              {
+                "Great beer selection": true
+              },
+              {
+                "Great cocktails": true
+              },
+              {
+                "Great wine list": true
+              },
+              {
+                "Sports": true
+              }
+            ],
+            "Popular for": [
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Solo dining": true
+              }
+            ],
+            "Accessibility": [
+              {
+                "Wheelchair accessible entrance": true
+              },
+              {
+                "Wheelchair accessible parking lot": true
+              },
+              {
+                "Wheelchair accessible restroom": true
+              },
+              {
+                "Wheelchair accessible seating": true
+              }
+            ],
+            "Offerings": [
+              {
+                "Alcohol": true
+              },
+              {
+                "Beer": true
+              },
+              {
+                "Cocktails": true
+              },
+              {
+                "Coffee": true
+              },
+              {
+                "Comfort food": true
+              },
+              {
+                "Food": true
+              },
+              {
+                "Food at bar": true
+              },
+              {
+                "Happy hour drinks": true
+              },
+              {
+                "Happy hour food": true
+              },
+              {
+                "Hard liquor": true
+              },
+              {
+                "Late-night food": true
+              },
+              {
+                "Quick bite": true
+              },
+              {
+                "Small plates": true
+              },
+              {
+                "Wine": true
+              }
+            ],
+            "Dining options": [
+              {
+                "Brunch": true
+              },
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Dessert": true
+              },
+              {
+                "Seating": true
+              },
+              {
+                "Table service": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Bar onsite": true
+              },
+              {
+                "Restroom": true
+              }
+            ],
+            "Atmosphere": [
+              {
+                "Casual": true
+              },
+              {
+                "Cozy": true
+              },
+              {
+                "Quiet": true
+              },
+              {
+                "Romantic": true
+              },
+              {
+                "Trending": true
+              },
+              {
+                "Trendy": true
+              }
+            ],
+            "Crowd": [
+              {
+                "Groups": true
+              },
+              {
+                "Tourists": true
+              }
+            ],
+            "Planning": [
+              {
+                "Accepts reservations": true
+              }
+            ],
+            "Payments": [
+              {
+                "Credit cards": true
+              },
+              {
+                "Debit cards": true
+              },
+              {
+                "NFC mobile payments": true
+              },
+              {
+                "Credit cards": true
+              }
+            ],
+            "Children": [
+              {
+                "Good for kids": true
+              },
+              {
+                "High chairs": true
+              }
+            ],
+            "Parking": [
+              {
+                "Free parking lot": true
+              },
+              {
+                "Free street parking": true
+              },
+              {
+                "Usually plenty of parking": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=Bayhouse&query_place_id=ChIJ6Sar1tVlwokRsPZv6QCT_mI",
+          "searchPageUrl": "https://www.google.com/maps/search/restaurant/@40.59321488768417,-73.70638644734598,13z?hl=en",
+          "searchString": "restaurant",
+          "language": "en",
+          "rank": 16,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nq6HjCwh57-xemnpr7AXDauO2-JoUhRIFKtpqkVEdWbxw4JhrEji5Arb-rkK3SCGp0uQscUlYuB4rnh9rX6tPUSJcrlL92T13ORJY8owDSiCzqjuQOGfUUHxlYiAdnuvV5DE7I=w408-h305-k-no",
+          "kgmid": "/g/1td72y4r"
+        }
+      },
+      {
+        "json": {
+          "title": "Michael's Restaurant",
+          "description": "Cozy, brick-walled diner offering large portions of breakfast fare, burgers & more all day & night.",
+          "price": "$10–20",
+          "categoryName": "Diner",
+          "address": "33-17 Broadway, Astoria, NY 11106",
+          "neighborhood": "Astoria",
+          "street": "33-17 Broadway",
+          "city": "Astoria",
+          "postalCode": "11106",
+          "state": "New York",
+          "countryCode": "US",
+          "website": "https://michaelsrestaurantny.com/",
+          "phone": "(718) 726-7474",
+          "phoneUnformatted": "+17187267474",
+          "claimThisBusiness": true,
+          "location": {
+            "lat": 40.7610412,
+            "lng": -73.9230643
+          },
+          "totalScore": 4.3,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJtw7DHjpfwokR4wTyYwENdBk",
+          "categories": [
+            "Diner",
+            "Breakfast restaurant",
+            "Sandwich shop"
+          ],
+          "fid": "0x89c25f3a1ec30eb7:0x19740d0163f204e3",
+          "cid": "1834105247869568227",
+          "reviewsCount": 695,
+          "imagesCount": 270,
+          "imageCategories": [],
+          "scrapedAt": "2025-08-06T05:44:25.346Z",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Thursday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Friday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Saturday",
+              "hours": "Open 24 hours"
+            },
+            {
+              "day": "Sunday",
+              "hours": "Open 24 hours"
+            }
+          ],
+          "additionalOpeningHours": {
+            "Delivery": [
+              {
+                "day": "Monday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Tuesday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Wednesday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Thursday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Friday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Saturday",
+                "hours": "Open 24 hours"
+              },
+              {
+                "day": "Sunday",
+                "hours": "Open 24 hours"
+              }
+            ]
+          },
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "No-contact delivery": true
+              },
+              {
+                "Delivery": true
+              },
+              {
+                "Takeout": true
+              },
+              {
+                "Dine-in": true
+              }
+            ],
+            "Highlights": [
+              {
+                "Fast service": true
+              },
+              {
+                "Great coffee": true
+              },
+              {
+                "Great dessert": true
+              },
+              {
+                "Serves local specialty": true
+              }
+            ],
+            "Popular for": [
+              {
+                "Breakfast": true
+              },
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Solo dining": true
+              }
+            ],
+            "Accessibility": [
+              {
+                "Wheelchair accessible entrance": true
+              },
+              {
+                "Wheelchair accessible restroom": true
+              },
+              {
+                "Wheelchair accessible seating": true
+              },
+              {
+                "Wheelchair accessible parking lot": false
+              }
+            ],
+            "Offerings": [
+              {
+                "Alcohol": true
+              },
+              {
+                "Beer": true
+              },
+              {
+                "Cocktails": true
+              },
+              {
+                "Coffee": true
+              },
+              {
+                "Comfort food": true
+              },
+              {
+                "Hard liquor": true
+              },
+              {
+                "Healthy options": true
+              },
+              {
+                "Late-night food": true
+              },
+              {
+                "Quick bite": true
+              },
+              {
+                "Small plates": true
+              },
+              {
+                "Wine": true
+              }
+            ],
+            "Dining options": [
+              {
+                "Breakfast": true
+              },
+              {
+                "Brunch": true
+              },
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Dessert": true
+              },
+              {
+                "Seating": true
+              },
+              {
+                "Table service": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Bar onsite": true
+              },
+              {
+                "Restroom": true
+              }
+            ],
+            "Atmosphere": [
+              {
+                "Casual": true
+              },
+              {
+                "Cozy": true
+              }
+            ],
+            "Crowd": [
+              {
+                "Groups": true
+              },
+              {
+                "Tourists": true
+              }
+            ],
+            "Payments": [
+              {
+                "Credit cards": true
+              },
+              {
+                "Debit cards": true
+              },
+              {
+                "NFC mobile payments": true
+              },
+              {
+                "Credit cards": true
+              }
+            ],
+            "Children": [
+              {
+                "Good for kids": true
+              },
+              {
+                "High chairs": true
+              },
+              {
+                "Kids' menu": true
+              }
+            ],
+            "Parking": [
+              {
+                "Free street parking": true
+              },
+              {
+                "Paid street parking": true
+              }
+            ],
+            "Pets": [
+              {
+                "Dogs allowed outside": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=Michael's%20Restaurant&query_place_id=ChIJtw7DHjpfwokR4wTyYwENdBk",
+          "searchPageUrl": "https://www.google.com/maps/search/restaurant/@40.80099311231582,-73.84296222367298,13z?hl=en",
+          "searchString": "restaurant",
+          "language": "en",
+          "rank": 1,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AC9h4noXCj8EcX1DvkWZ7OA6XsJKyEK16-t1zR6iIVds8OilFwpQqpH-NKgtQq507c0z3Hw6W5qDN9DLHQxhePNARmhzZMaTCEd-FQ7KW_qDJ3ibRCZP95h95H_TNZ4EsvmBuwVQ4bq3NA=w426-h240-k-no",
+          "kgmid": "/g/1tdkylwg"
+        }
+      },
+      {
+        "json": {
+          "title": "El Maguey Mexican Restaurant",
+          "price": "$$",
+          "categoryName": "Mexican restaurant",
+          "address": "83-28 Northern Blvd, Jackson Heights, NY 11372",
+          "neighborhood": "Jackson Heights",
+          "street": "83-28 Northern Blvd",
+          "city": "Jackson Heights",
+          "postalCode": "11372",
+          "state": "New York",
+          "countryCode": "US",
+          "website": "https://www.facebook.com/ElMagueyRestaurantNYC/",
+          "phone": "(929) 522-0562",
+          "phoneUnformatted": "+19295220562",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 40.7555924,
+            "lng": -73.8836222
+          },
+          "totalScore": 4.3,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJsTWrraZfwokRZGJ6_md9Bg4",
+          "categories": [
+            "Mexican restaurant",
+            "Brunch restaurant",
+            "Karaoke bar",
+            "Restaurant",
+            "Taco restaurant"
+          ],
+          "fid": "0x89c25fa6adab35b1:0xe067d67fe7a6264",
+          "cid": "1010633051995791972",
+          "reviewsCount": 969,
+          "imagesCount": 770,
+          "imageCategories": [],
+          "scrapedAt": "2025-08-06T05:44:25.346Z",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "12 PM to 4 AM"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "12 PM to 4 AM"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "12 PM to 4 AM"
+            },
+            {
+              "day": "Thursday",
+              "hours": "12 PM to 4 AM"
+            },
+            {
+              "day": "Friday",
+              "hours": "12 PM to 4 AM"
+            },
+            {
+              "day": "Saturday",
+              "hours": "12 PM to 4 AM"
+            },
+            {
+              "day": "Sunday",
+              "hours": "12 PM to 4 AM"
+            }
+          ],
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "Outdoor seating": true
+              },
+              {
+                "No-contact delivery": true
+              },
+              {
+                "Delivery": true
+              },
+              {
+                "Takeout": true
+              },
+              {
+                "Dine-in": true
+              }
+            ],
+            "Highlights": [
+              {
+                "Fast service": true
+              },
+              {
+                "Great cocktails": true
+              },
+              {
+                "Sports": true
+              }
+            ],
+            "Popular for": [
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Solo dining": true
+              }
+            ],
+            "Accessibility": [
+              {
+                "Wheelchair accessible entrance": true
+              },
+              {
+                "Wheelchair accessible restroom": true
+              },
+              {
+                "Wheelchair accessible seating": true
+              }
+            ],
+            "Offerings": [
+              {
+                "Alcohol": true
+              },
+              {
+                "Beer": true
+              },
+              {
+                "Cocktails": true
+              },
+              {
+                "Coffee": true
+              },
+              {
+                "Comfort food": true
+              },
+              {
+                "Happy hour drinks": true
+              },
+              {
+                "Happy hour food": true
+              },
+              {
+                "Hard liquor": true
+              },
+              {
+                "Healthy options": true
+              },
+              {
+                "Late-night food": true
+              },
+              {
+                "Quick bite": true
+              },
+              {
+                "Small plates": true
+              },
+              {
+                "Wine": true
+              }
+            ],
+            "Dining options": [
+              {
+                "Brunch": true
+              },
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Dessert": true
+              },
+              {
+                "Seating": true
+              },
+              {
+                "Table service": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Bar onsite": true
+              },
+              {
+                "Restroom": true
+              }
+            ],
+            "Atmosphere": [
+              {
+                "Casual": true
+              },
+              {
+                "Cozy": true
+              },
+              {
+                "Trendy": true
+              }
+            ],
+            "Crowd": [
+              {
+                "Groups": true
+              },
+              {
+                "Tourists": true
+              }
+            ],
+            "Planning": [
+              {
+                "Accepts reservations": true
+              }
+            ],
+            "Payments": [
+              {
+                "Credit cards": true
+              },
+              {
+                "Debit cards": true
+              },
+              {
+                "NFC mobile payments": true
+              },
+              {
+                "Credit cards": true
+              }
+            ],
+            "Children": [
+              {
+                "Good for kids": true
+              },
+              {
+                "High chairs": true
+              },
+              {
+                "Kids' menu": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=El%20Maguey%20Mexican%20Restaurant&query_place_id=ChIJsTWrraZfwokRZGJ6_md9Bg4",
+          "searchPageUrl": "https://www.google.com/maps/search/restaurant/@40.80099311231582,-73.84296222367298,13z?hl=en",
+          "searchString": "restaurant",
+          "language": "en",
+          "rank": 2,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/p/AF1QipOW82uHcFKpcGMxW60d2o-Ap_XNi0Dj7dCjcb3o=w426-h240-k-no",
+          "kgmid": "/g/11c0ywj2x3"
+        }
+      },
+      {
+        "json": {
+          "title": "Roy's Restaurant Bar",
+          "description": "Relaxed dining spot featuring familiar Latin American & American meat & seafood dishes.",
+          "price": "$10–20",
+          "categoryName": "Dominican restaurant",
+          "address": "880 E Tremont Ave, Bronx, NY 10460",
+          "neighborhood": "West Bronx",
+          "street": "880 E Tremont Ave",
+          "city": "Bronx",
+          "postalCode": "10460",
+          "state": "New York",
+          "countryCode": "US",
+          "website": "https://www.roysrestaurantny.com/",
+          "phone": "(917) 471-8937",
+          "phoneUnformatted": "+19174718937",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 40.8427224,
+            "lng": -73.8859136
+          },
+          "totalScore": 4.1,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJp5qaq4v0wokRJ1a9RJ6cBWQ",
+          "categories": [
+            "Dominican restaurant",
+            "Bar",
+            "Latin American restaurant",
+            "Spanish restaurant"
+          ],
+          "fid": "0x89c2f48bab9a9aa7:0x64059c9e44bd5627",
+          "cid": "7207338982248371751",
+          "reviewsCount": 954,
+          "imagesCount": 850,
+          "imageCategories": [],
+          "scrapedAt": "2025-08-06T05:44:25.347Z",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "9 AM to 4 AM"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "9 AM to 2 AM"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "9 AM to 4 AM"
+            },
+            {
+              "day": "Thursday",
+              "hours": "9 AM to 4 AM"
+            },
+            {
+              "day": "Friday",
+              "hours": "9 AM to 4 AM"
+            },
+            {
+              "day": "Saturday",
+              "hours": "9 AM to 4 AM"
+            },
+            {
+              "day": "Sunday",
+              "hours": "9 AM to 4 AM"
+            }
+          ],
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "No-contact delivery": true
+              },
+              {
+                "Delivery": true
+              },
+              {
+                "Takeout": true
+              },
+              {
+                "Dine-in": true
+              }
+            ],
+            "Highlights": [
+              {
+                "Fast service": true
+              },
+              {
+                "Great beer selection": true
+              },
+              {
+                "Great cocktails": true
+              },
+              {
+                "Great coffee": true
+              },
+              {
+                "Great dessert": true
+              },
+              {
+                "Great wine list": true
+              },
+              {
+                "Live music": true
+              },
+              {
+                "Sports": true
+              }
+            ],
+            "Popular for": [
+              {
+                "Breakfast": true
+              },
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Solo dining": true
+              }
+            ],
+            "Accessibility": [
+              {
+                "Wheelchair accessible entrance": true
+              },
+              {
+                "Wheelchair accessible restroom": true
+              },
+              {
+                "Wheelchair accessible seating": true
+              },
+              {
+                "Wheelchair accessible parking lot": false
+              }
+            ],
+            "Offerings": [
+              {
+                "Alcohol": true
+              },
+              {
+                "Beer": true
+              },
+              {
+                "Cocktails": true
+              },
+              {
+                "Coffee": true
+              },
+              {
+                "Comfort food": true
+              },
+              {
+                "Happy hour drinks": true
+              },
+              {
+                "Happy hour food": true
+              },
+              {
+                "Hard liquor": true
+              },
+              {
+                "Healthy options": true
+              },
+              {
+                "Private dining room": true
+              },
+              {
+                "Quick bite": true
+              },
+              {
+                "Small plates": true
+              },
+              {
+                "Wine": true
+              }
+            ],
+            "Dining options": [
+              {
+                "Breakfast": true
+              },
+              {
+                "Brunch": true
+              },
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Catering": true
+              },
+              {
+                "Counter service": true
+              },
+              {
+                "Dessert": true
+              },
+              {
+                "Seating": true
+              },
+              {
+                "Table service": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Bar onsite": true
+              },
+              {
+                "Gender-neutral restroom": true
+              },
+              {
+                "Restroom": true
+              },
+              {
+                "Wi-Fi": true
+              },
+              {
+                "Free Wi-Fi": true
+              }
+            ],
+            "Atmosphere": [
+              {
+                "Casual": true
+              },
+              {
+                "Cozy": true
+              },
+              {
+                "Trendy": true
+              }
+            ],
+            "Crowd": [
+              {
+                "Family-friendly": true
+              },
+              {
+                "Groups": true
+              },
+              {
+                "Tourists": true
+              }
+            ],
+            "Planning": [
+              {
+                "Accepts reservations": true
+              }
+            ],
+            "Payments": [
+              {
+                "Credit cards": true
+              },
+              {
+                "Debit cards": true
+              },
+              {
+                "NFC mobile payments": true
+              },
+              {
+                "Credit cards": true
+              }
+            ],
+            "Children": [
+              {
+                "Good for kids": true
+              },
+              {
+                "High chairs": true
+              },
+              {
+                "Kids' menu": true
+              }
+            ],
+            "Parking": [
+              {
+                "Free street parking": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=Roy's%20Restaurant%20Bar&query_place_id=ChIJp5qaq4v0wokRJ1a9RJ6cBWQ",
+          "searchPageUrl": "https://www.google.com/maps/search/restaurant/@40.80099311231582,-73.84296222367298,13z?hl=en",
+          "searchString": "restaurant",
+          "language": "en",
+          "rank": 3,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/p/AF1QipOS8tvvK83DThM7_a-Ozh5LKhzV4815yBiEbtKU=w408-h327-k-no",
+          "kgmid": "/g/1ptxrr_r7"
+        }
+      },
+      {
+        "json": {
+          "title": "Truth Restaurant Astoria",
+          "price": "$50–100",
+          "categoryName": "Asian fusion restaurant",
+          "address": "27-35 21st St, Astoria, NY 11102",
+          "neighborhood": "Astoria",
+          "street": "27-35 21st St",
+          "city": "Astoria",
+          "postalCode": "11102",
+          "state": "New York",
+          "countryCode": "US",
+          "website": "https://www.truthastoria.com/",
+          "phone": "(347) 527-2199",
+          "phoneUnformatted": "+13475272199",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 40.77112,
+            "lng": -73.926401
+          },
+          "totalScore": 4.5,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJx9TFWhBfwokRjqfzfLhojJo",
+          "categories": [
+            "Asian fusion restaurant",
+            "Asian restaurant",
+            "Restaurant"
+          ],
+          "fid": "0x89c25f105ac5d4c7:0x9a8c68b87cf3a78e",
+          "cid": "11136391120160008078",
+          "reviewsCount": 187,
+          "imagesCount": 244,
+          "imageCategories": [],
+          "scrapedAt": "2025-08-06T05:44:25.347Z",
+          "reserveTableUrl": "https://www.google.com/maps/reserve/v/dine/c/hK_VTSbV6Vs?source=pa&opi=79508299&hl=en-US&gei=t-uSaJPPI46HptQPk8iQsQs&sourceurl=https://www.google.com/service/MapsSearchService/Search?hl%3Den%26authuser%3D0%26gl%3Dus%26q%3Drestaurant%26tbm%3Dmap",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "4 PM to 2 AM"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "4 PM to 2 AM"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "4 PM to 2 AM"
+            },
+            {
+              "day": "Thursday",
+              "hours": "4 PM to 2 AM"
+            },
+            {
+              "day": "Friday",
+              "hours": "4 PM to 2 AM"
+            },
+            {
+              "day": "Saturday",
+              "hours": "4 PM to 2 AM"
+            },
+            {
+              "day": "Sunday",
+              "hours": "12 PM to 2 AM"
+            }
+          ],
+          "additionalOpeningHours": {
+            "Takeout": [
+              {
+                "day": "Monday",
+                "hours": "4–11:30 PM"
+              },
+              {
+                "day": "Tuesday",
+                "hours": "4–11:30 PM"
+              },
+              {
+                "day": "Wednesday",
+                "hours": "4–11:30 PM"
+              },
+              {
+                "day": "Thursday",
+                "hours": "4–11:30 PM"
+              },
+              {
+                "day": "Friday",
+                "hours": "4–11:30 PM"
+              },
+              {
+                "day": "Saturday",
+                "hours": "4–11:30 PM"
+              },
+              {
+                "day": "Sunday",
+                "hours": "12–11:30 PM"
+              }
+            ],
+            "Online service hours": [
+              {
+                "day": "Monday",
+                "hours": "4:30–11:30 PM"
+              },
+              {
+                "day": "Tuesday",
+                "hours": "4:30–11:30 PM"
+              },
+              {
+                "day": "Wednesday",
+                "hours": "4:30–11:30 PM"
+              },
+              {
+                "day": "Thursday",
+                "hours": "4:30–11:30 PM"
+              },
+              {
+                "day": "Friday",
+                "hours": "4:30–11:30 PM"
+              },
+              {
+                "day": "Saturday",
+                "hours": "4:30–11:30 PM"
+              },
+              {
+                "day": "Sunday",
+                "hours": "12–11:30 PM"
+              }
+            ],
+            "Brunch": [
+              {
+                "day": "Monday",
+                "hours": "Closed"
+              },
+              {
+                "day": "Tuesday",
+                "hours": "Closed"
+              },
+              {
+                "day": "Wednesday",
+                "hours": "Closed"
+              },
+              {
+                "day": "Thursday",
+                "hours": "Closed"
+              },
+              {
+                "day": "Friday",
+                "hours": "Closed"
+              },
+              {
+                "day": "Saturday",
+                "hours": "Closed"
+              },
+              {
+                "day": "Sunday",
+                "hours": "12–4 PM"
+              }
+            ],
+            "Happy hours": [
+              {
+                "day": "Monday",
+                "hours": "4–7 PM"
+              },
+              {
+                "day": "Tuesday",
+                "hours": "4–7 PM"
+              },
+              {
+                "day": "Wednesday",
+                "hours": "4–7 PM"
+              },
+              {
+                "day": "Thursday",
+                "hours": "4–7 PM"
+              },
+              {
+                "day": "Friday",
+                "hours": "Closed"
+              },
+              {
+                "day": "Saturday",
+                "hours": "Closed"
+              },
+              {
+                "day": "Sunday",
+                "hours": "Closed"
+              }
+            ]
+          },
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "Delivery": true
+              },
+              {
+                "Onsite services": true
+              },
+              {
+                "Takeout": true
+              },
+              {
+                "Dine-in": true
+              }
+            ],
+            "Highlights": [
+              {
+                "Fast service": true
+              },
+              {
+                "Great cocktails": true
+              },
+              {
+                "Great wine list": true
+              },
+              {
+                "Live music": true
+              }
+            ],
+            "Popular for": [
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Solo dining": true
+              }
+            ],
+            "Accessibility": [
+              {
+                "Wheelchair accessible entrance": true
+              },
+              {
+                "Wheelchair accessible restroom": true
+              },
+              {
+                "Wheelchair accessible seating": true
+              },
+              {
+                "Wheelchair accessible parking lot": false
+              }
+            ],
+            "Offerings": [
+              {
+                "Alcohol": true
+              },
+              {
+                "Beer": true
+              },
+              {
+                "Cocktails": true
+              },
+              {
+                "Coffee": true
+              },
+              {
+                "Comfort food": true
+              },
+              {
+                "Happy hour drinks": true
+              },
+              {
+                "Happy hour food": true
+              },
+              {
+                "Hard liquor": true
+              },
+              {
+                "Late-night food": true
+              },
+              {
+                "Private dining room": true
+              },
+              {
+                "Small plates": true
+              },
+              {
+                "Vegan options": true
+              },
+              {
+                "Vegetarian options": true
+              },
+              {
+                "Wine": true
+              }
+            ],
+            "Dining options": [
+              {
+                "Brunch": true
+              },
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Dessert": true
+              },
+              {
+                "Seating": true
+              },
+              {
+                "Table service": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Bar onsite": true
+              },
+              {
+                "Restroom": true
+              }
+            ],
+            "Atmosphere": [
+              {
+                "Casual": true
+              },
+              {
+                "Cozy": true
+              },
+              {
+                "Trendy": true
+              }
+            ],
+            "Crowd": [
+              {
+                "Family-friendly": true
+              },
+              {
+                "Groups": true
+              },
+              {
+                "LGBTQ+ friendly": true
+              },
+              {
+                "Transgender safespace": true
+              }
+            ],
+            "Planning": [
+              {
+                "Dinner reservations recommended": true
+              },
+              {
+                "Accepts reservations": true
+              }
+            ],
+            "Payments": [
+              {
+                "Credit cards": true
+              },
+              {
+                "Debit cards": true
+              },
+              {
+                "NFC mobile payments": true
+              },
+              {
+                "Credit cards": true
+              }
+            ],
+            "Parking": [
+              {
+                "Free street parking": true
+              },
+              {
+                "Paid street parking": true
+              },
+              {
+                "Usually somewhat difficult to find a space": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=Truth%20Restaurant%20Astoria&query_place_id=ChIJx9TFWhBfwokRjqfzfLhojJo",
+          "searchPageUrl": "https://www.google.com/maps/search/restaurant/@40.80099311231582,-73.84296222367298,13z?hl=en",
+          "searchString": "restaurant",
+          "language": "en",
+          "rank": 4,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nqur3uzQDqL08zEPxWa_LwCu-9Nh-A4aeDvqyRInCQI4bdz1hm_6mLysxjSq2Viiv7f7Ma7HF1i2OBfn21dhlsqVBbZFpoTHfhdYGy8efrKMn-5GOyybuGP2OYtUWI93ojhLjJo=w408-h544-k-no",
+          "kgmid": "/g/11kh_kg0cn"
+        }
+      },
+      {
+        "json": {
+          "title": "D'antigua Restaurant Bar",
+          "description": "Latin American lounge & restaurant offering live entertainment & TV sports in relaxed surroundings.",
+          "price": "$$",
+          "categoryName": "Restaurant",
+          "address": "84-16 Northern Blvd, Jackson Heights, NY 11372",
+          "neighborhood": "Jackson Heights",
+          "street": "84-16 Northern Blvd",
+          "city": "Jackson Heights",
+          "postalCode": "11372",
+          "state": "New York",
+          "countryCode": "US",
+          "phone": "(718) 779-0128",
+          "phoneUnformatted": "+17187790128",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 40.7556763,
+            "lng": -73.8829005
+          },
+          "totalScore": 4.4,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJ75mU_6NfwokRRmijMqQ2u38",
+          "categories": [
+            "Restaurant",
+            "Bar",
+            "Karaoke",
+            "Live music venue"
+          ],
+          "fid": "0x89c25fa3ff9499ef:0x7fbb36a432a36846",
+          "cid": "9204010342313846854",
+          "reviewsCount": 915,
+          "imagesCount": 538,
+          "imageCategories": [],
+          "scrapedAt": "2025-08-06T05:44:25.347Z",
+          "reserveTableUrl": "https://www.google.com/maps/reserve/v/dine/c/YroBVo8uYE4?source=pa&opi=79508299&hl=en-US&gei=t-uSaJPPI46HptQPk8iQsQs&sourceurl=https://www.google.com/service/MapsSearchService/Search?hl%3Den%26authuser%3D0%26gl%3Dus%26q%3Drestaurant%26tbm%3Dmap",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "Closed"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "4 PM to 4 AM"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "4 PM to 4 AM"
+            },
+            {
+              "day": "Thursday",
+              "hours": "4 PM to 4 AM"
+            },
+            {
+              "day": "Friday",
+              "hours": "4 PM to 4 AM"
+            },
+            {
+              "day": "Saturday",
+              "hours": "4 PM to 4 AM"
+            },
+            {
+              "day": "Sunday",
+              "hours": "4 PM to 4 AM"
+            }
+          ],
+          "additionalOpeningHours": {
+            "Takeout": [
+              {
+                "day": "Monday",
+                "hours": "Closed"
+              },
+              {
+                "day": "Tuesday",
+                "hours": "4 PM–12 AM"
+              },
+              {
+                "day": "Wednesday",
+                "hours": "4 PM–12 AM"
+              },
+              {
+                "day": "Thursday",
+                "hours": "4 PM–12 AM"
+              },
+              {
+                "day": "Friday",
+                "hours": "4 PM–1 AM"
+              },
+              {
+                "day": "Saturday",
+                "hours": "4 PM–1 AM"
+              },
+              {
+                "day": "Sunday",
+                "hours": "4 PM–12 AM"
+              }
+            ]
+          },
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "Curbside pickup": true
+              },
+              {
+                "No-contact delivery": true
+              },
+              {
+                "Delivery": true
+              },
+              {
+                "Takeout": true
+              },
+              {
+                "Dine-in": true
+              }
+            ],
+            "Highlights": [
+              {
+                "Fast service": true
+              },
+              {
+                "Great beer selection": true
+              },
+              {
+                "Great cocktails": true
+              },
+              {
+                "Live music": true
+              },
+              {
+                "Sports": true
+              }
+            ],
+            "Popular for": [
+              {
+                "Dinner": true
+              },
+              {
+                "Solo dining": true
+              }
+            ],
+            "Accessibility": [
+              {
+                "Wheelchair accessible entrance": true
+              },
+              {
+                "Wheelchair accessible restroom": true
+              },
+              {
+                "Wheelchair accessible seating": true
+              }
+            ],
+            "Offerings": [
+              {
+                "Alcohol": true
+              },
+              {
+                "Beer": true
+              },
+              {
+                "Cocktails": true
+              },
+              {
+                "Coffee": true
+              },
+              {
+                "Comfort food": true
+              },
+              {
+                "Happy hour drinks": true
+              },
+              {
+                "Happy hour food": true
+              },
+              {
+                "Hard liquor": true
+              },
+              {
+                "Late-night food": true
+              },
+              {
+                "Quick bite": true
+              },
+              {
+                "Small plates": true
+              },
+              {
+                "Vegetarian options": true
+              },
+              {
+                "Wine": true
+              }
+            ],
+            "Dining options": [
+              {
+                "Brunch": true
+              },
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Catering": true
+              },
+              {
+                "Counter service": true
+              },
+              {
+                "Dessert": true
+              },
+              {
+                "Seating": true
+              },
+              {
+                "Table service": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Bar onsite": true
+              },
+              {
+                "Restroom": true
+              },
+              {
+                "Wi-Fi": true
+              },
+              {
+                "Free Wi-Fi": true
+              }
+            ],
+            "Atmosphere": [
+              {
+                "Casual": true
+              },
+              {
+                "Cozy": true
+              },
+              {
+                "Trendy": true
+              }
+            ],
+            "Crowd": [
+              {
+                "Family-friendly": true
+              },
+              {
+                "Groups": true
+              },
+              {
+                "LGBTQ+ friendly": true
+              },
+              {
+                "Tourists": true
+              },
+              {
+                "Transgender safespace": true
+              }
+            ],
+            "Planning": [
+              {
+                "Accepts reservations": true
+              }
+            ],
+            "Payments": [
+              {
+                "Credit cards": true
+              },
+              {
+                "Debit cards": true
+              },
+              {
+                "NFC mobile payments": true
+              },
+              {
+                "Credit cards": true
+              }
+            ],
+            "Children": [
+              {
+                "Good for kids": true
+              },
+              {
+                "High chairs": true
+              },
+              {
+                "Kids' menu": true
+              }
+            ],
+            "Parking": [
+              {
+                "Paid street parking": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=D'antigua%20Restaurant%20Bar&query_place_id=ChIJ75mU_6NfwokRRmijMqQ2u38",
+          "searchPageUrl": "https://www.google.com/maps/search/restaurant/@40.80099311231582,-73.84296222367298,13z?hl=en",
+          "searchString": "restaurant",
+          "language": "en",
+          "rank": 5,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nrXan1a9rVRLaL9iaJhsUGnCRoFl_Q31iG3fUeoFJJmN1Mtkc5ZozvQRom2C4qGwJwkmolmRnQC7DEXsFF4en3UYEiAhDdf60-V_NfThE5uPt1qIElch869d5nFvswrvwMHqsQ=w408-h272-k-no",
+          "kgmid": "/g/1tf03dfd"
+        }
+      },
+      {
+        "json": {
+          "title": "Fabrika",
+          "price": "$$",
+          "categoryName": "Pan-Latin restaurant",
+          "address": "80-24 Northern Blvd, Jackson Heights, NY 11372",
+          "neighborhood": "Jackson Heights",
+          "street": "80-24 Northern Blvd",
+          "city": "Jackson Heights",
+          "postalCode": "11372",
+          "state": "New York",
+          "countryCode": "US",
+          "website": "https://www.fabrikany.com/",
+          "phone": "(929) 300-3135",
+          "phoneUnformatted": "+19293003135",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 40.7552294,
+            "lng": -73.8865204
+          },
+          "totalScore": 4.7,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJF-Yh-hNfwokRNge04jMeKcE",
+          "categories": [
+            "Pan-Latin restaurant",
+            "Delivery Restaurant",
+            "Takeout Restaurant",
+            "Restaurant"
+          ],
+          "fid": "0x89c25f13fa21e617:0xc1291e33e2b40736",
+          "cid": "13918689331560843062",
+          "reviewsCount": 673,
+          "imagesCount": 2846,
+          "imageCategories": [],
+          "scrapedAt": "2025-08-06T05:44:25.347Z",
+          "reserveTableUrl": "https://www.google.com/maps/reserve/v/dine/c/RTBJPHi7nnc?source=pa&opi=79508299&hl=en-US&gei=t-uSaJPPI46HptQPk8iQsQs&sourceurl=https://www.google.com/service/MapsSearchService/Search?hl%3Den%26authuser%3D0%26gl%3Dus%26q%3Drestaurant%26tbm%3Dmap",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "Closed"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "5 PM to 1 AM"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "5 PM to 1 AM"
+            },
+            {
+              "day": "Thursday",
+              "hours": "5 PM to 2 AM"
+            },
+            {
+              "day": "Friday",
+              "hours": "4 PM to 2 AM"
+            },
+            {
+              "day": "Saturday",
+              "hours": "4 PM to 2 AM"
+            },
+            {
+              "day": "Sunday",
+              "hours": "3 PM to 12 AM"
+            }
+          ],
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "Outdoor seating": true
+              },
+              {
+                "Curbside pickup": true
+              },
+              {
+                "No-contact delivery": true
+              },
+              {
+                "Delivery": true
+              },
+              {
+                "Takeout": true
+              },
+              {
+                "Dine-in": true
+              }
+            ],
+            "Highlights": [
+              {
+                "Fast service": true
+              },
+              {
+                "Great beer selection": true
+              },
+              {
+                "Great cocktails": true
+              }
+            ],
+            "Popular for": [
+              {
+                "Dinner": true
+              },
+              {
+                "Solo dining": true
+              }
+            ],
+            "Accessibility": [
+              {
+                "Wheelchair accessible entrance": true
+              },
+              {
+                "Wheelchair accessible restroom": true
+              },
+              {
+                "Wheelchair accessible seating": true
+              }
+            ],
+            "Offerings": [
+              {
+                "Alcohol": true
+              },
+              {
+                "Beer": true
+              },
+              {
+                "Cocktails": true
+              },
+              {
+                "Coffee": true
+              },
+              {
+                "Comfort food": true
+              },
+              {
+                "Happy hour drinks": true
+              },
+              {
+                "Happy hour food": true
+              },
+              {
+                "Hard liquor": true
+              },
+              {
+                "Late-night food": true
+              },
+              {
+                "Small plates": true
+              },
+              {
+                "Vegan options": true
+              },
+              {
+                "Vegetarian options": true
+              },
+              {
+                "Wine": true
+              }
+            ],
+            "Dining options": [
+              {
+                "Brunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Counter service": true
+              },
+              {
+                "Dessert": true
+              },
+              {
+                "Seating": true
+              },
+              {
+                "Table service": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Bar onsite": true
+              },
+              {
+                "Restroom": true
+              }
+            ],
+            "Atmosphere": [
+              {
+                "Casual": true
+              },
+              {
+                "Cozy": true
+              },
+              {
+                "Trendy": true
+              }
+            ],
+            "Crowd": [
+              {
+                "Groups": true
+              }
+            ],
+            "Planning": [
+              {
+                "Dinner reservations recommended": true
+              },
+              {
+                "Accepts reservations": true
+              }
+            ],
+            "Payments": [
+              {
+                "Credit cards": true
+              },
+              {
+                "Debit cards": true
+              },
+              {
+                "NFC mobile payments": true
+              },
+              {
+                "Credit cards": true
+              }
+            ],
+            "Children": [
+              {
+                "High chairs": true
+              }
+            ],
+            "Parking": [
+              {
+                "Free street parking": true
+              },
+              {
+                "Paid street parking": true
+              },
+              {
+                "Usually somewhat difficult to find a space": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=Fabrika&query_place_id=ChIJF-Yh-hNfwokRNge04jMeKcE",
+          "searchPageUrl": "https://www.google.com/maps/search/restaurant/@40.80099311231582,-73.84296222367298,13z?hl=en",
+          "searchString": "restaurant",
+          "language": "en",
+          "rank": 6,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AC9h4nreYdzz_nCQVrkDuKkpDFW8a963kNjp6XWl7hcc6BT_7NcIJE1w-ieCV5S_p1IcrBpVu-PtScwZA1glyQXyAamBDPCzQep3TylX5rPyiN9DqJ8ttHRez_VFG_MGKty9kmTx8jcrKw=w417-h240-k-no",
+          "kgmid": "/g/11rz9ff893"
+        }
+      },
+      {
+        "json": {
+          "title": "Sanfords",
+          "description": "This eatery offers twists on New American comfort fare in a contemporary updated-diner setting.",
+          "price": "$30–50",
+          "categoryName": "New American restaurant",
+          "address": "30-13 Broadway, Astoria, NY 11106",
+          "neighborhood": "Astoria",
+          "street": "30-13 Broadway",
+          "city": "Astoria",
+          "postalCode": "11106",
+          "state": "New York",
+          "countryCode": "US",
+          "website": "http://www.sanfordsnyc.com/",
+          "phone": "(718) 932-9569",
+          "phoneUnformatted": "+17189329569",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 40.7622946,
+            "lng": -73.9255437
+          },
+          "totalScore": 4.4,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJK6yDNjdfwokR_I3wR_rkS8s",
+          "categories": [
+            "New American restaurant",
+            "Brunch restaurant",
+            "Cocktail bar"
+          ],
+          "fid": "0x89c25f373683ac2b:0xcb4be4fa47f08dfc",
+          "cid": "14649053976552574460",
+          "reviewsCount": 2472,
+          "imagesCount": 2415,
+          "imageCategories": [],
+          "scrapedAt": "2025-08-06T05:44:25.347Z",
+          "reserveTableUrl": "https://www.google.com/maps/reserve/v/dine/c/43udRsA2ABU?source=pa&opi=79508299&hl=en-US&gei=t-uSaJPPI46HptQPk8iQsQs&sourceurl=https://www.google.com/service/MapsSearchService/Search?hl%3Den%26authuser%3D0%26gl%3Dus%26q%3Drestaurant%26tbm%3Dmap",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "10 AM to 12 AM"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "10 AM to 12 AM"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "10 AM to 12 AM"
+            },
+            {
+              "day": "Thursday",
+              "hours": "10 AM to 12 AM"
+            },
+            {
+              "day": "Friday",
+              "hours": "10 AM to 12 AM"
+            },
+            {
+              "day": "Saturday",
+              "hours": "10 AM to 12 AM"
+            },
+            {
+              "day": "Sunday",
+              "hours": "10 AM to 12 AM"
+            }
+          ],
+          "additionalOpeningHours": {
+            "Happy hours": [
+              {
+                "day": "Monday",
+                "hours": "4–6 PM"
+              },
+              {
+                "day": "Tuesday",
+                "hours": "4–6 PM"
+              },
+              {
+                "day": "Wednesday",
+                "hours": "4–6 PM"
+              },
+              {
+                "day": "Thursday",
+                "hours": "4–6 PM"
+              },
+              {
+                "day": "Friday",
+                "hours": "4–6 PM"
+              },
+              {
+                "day": "Saturday",
+                "hours": "4–6 PM"
+              },
+              {
+                "day": "Sunday",
+                "hours": "4–6 PM"
+              }
+            ]
+          },
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "No-contact delivery": true
+              },
+              {
+                "Delivery": true
+              },
+              {
+                "Takeout": true
+              },
+              {
+                "Dine-in": true
+              }
+            ],
+            "Highlights": [
+              {
+                "Fast service": true
+              },
+              {
+                "Great cocktails": true
+              },
+              {
+                "Great coffee": true
+              },
+              {
+                "Great dessert": true
+              },
+              {
+                "Great tea selection": true
+              }
+            ],
+            "Popular for": [
+              {
+                "Breakfast": true
+              },
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Solo dining": true
+              }
+            ],
+            "Accessibility": [
+              {
+                "Wheelchair accessible entrance": true
+              },
+              {
+                "Wheelchair accessible restroom": true
+              },
+              {
+                "Wheelchair accessible seating": true
+              },
+              {
+                "Wheelchair accessible parking lot": false
+              }
+            ],
+            "Offerings": [
+              {
+                "Alcohol": true
+              },
+              {
+                "Beer": true
+              },
+              {
+                "Cocktails": true
+              },
+              {
+                "Coffee": true
+              },
+              {
+                "Comfort food": true
+              },
+              {
+                "Happy hour drinks": true
+              },
+              {
+                "Happy hour food": true
+              },
+              {
+                "Hard liquor": true
+              },
+              {
+                "Healthy options": true
+              },
+              {
+                "Late-night food": true
+              },
+              {
+                "Organic dishes": true
+              },
+              {
+                "Private dining room": true
+              },
+              {
+                "Quick bite": true
+              },
+              {
+                "Small plates": true
+              },
+              {
+                "Vegan options": true
+              },
+              {
+                "Vegetarian options": true
+              },
+              {
+                "Wine": true
+              }
+            ],
+            "Dining options": [
+              {
+                "Breakfast": true
+              },
+              {
+                "Brunch": true
+              },
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Catering": true
+              },
+              {
+                "Counter service": true
+              },
+              {
+                "Dessert": true
+              },
+              {
+                "Seating": true
+              },
+              {
+                "Table service": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Bar onsite": true
+              },
+              {
+                "Gender-neutral restroom": true
+              },
+              {
+                "Restroom": true
+              },
+              {
+                "Wi-Fi": true
+              },
+              {
+                "Free Wi-Fi": true
+              }
+            ],
+            "Atmosphere": [
+              {
+                "Casual": true
+              },
+              {
+                "Cozy": true
+              },
+              {
+                "Trendy": true
+              },
+              {
+                "Upscale": true
+              }
+            ],
+            "Crowd": [
+              {
+                "Family-friendly": true
+              },
+              {
+                "Groups": true
+              },
+              {
+                "LGBTQ+ friendly": true
+              },
+              {
+                "Tourists": true
+              }
+            ],
+            "Planning": [
+              {
+                "Lunch reservations recommended": true
+              },
+              {
+                "Dinner reservations recommended": true
+              },
+              {
+                "Accepts reservations": true
+              }
+            ],
+            "Payments": [
+              {
+                "Credit cards": true
+              },
+              {
+                "Debit cards": true
+              },
+              {
+                "Credit cards": true
+              }
+            ],
+            "Children": [
+              {
+                "Good for kids": true
+              },
+              {
+                "High chairs": true
+              }
+            ],
+            "Parking": [
+              {
+                "Paid parking lot": true
+              },
+              {
+                "Paid street parking": true
+              },
+              {
+                "Usually difficult to find a space": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=Sanfords&query_place_id=ChIJK6yDNjdfwokR_I3wR_rkS8s",
+          "searchPageUrl": "https://www.google.com/maps/search/restaurant/@40.80099311231582,-73.84296222367298,13z?hl=en",
+          "searchString": "restaurant",
+          "language": "en",
+          "rank": 7,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/p/AF1QipO3bcb2iwPv4zZrcCBOZoMBz9Ss5hLXlPnpdbVm=w408-h271-k-no",
+          "kgmid": "/g/1tg51bn5"
+        }
+      },
+      {
+        "json": {
+          "title": "Bani Restaurant",
+          "price": "$30–50",
+          "categoryName": "Latin American restaurant",
+          "address": "1056 Bronx River Ave, Bronx, NY 10472",
+          "neighborhood": "East Bronx",
+          "street": "1056 Bronx River Ave",
+          "city": "Bronx",
+          "postalCode": "10472",
+          "state": "New York",
+          "countryCode": "US",
+          "phone": "(718) 618-7937",
+          "phoneUnformatted": "+17186187937",
+          "claimThisBusiness": false,
+          "location": {
+            "lat": 40.8250885,
+            "lng": -73.8828887
+          },
+          "totalScore": 4,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJF8lk4_v0wokRk4HS31h72fE",
+          "categories": [
+            "Latin American restaurant"
+          ],
+          "fid": "0x89c2f4fbe364c917:0xf1d97b58dfd28193",
+          "cid": "17427095854729298323",
+          "reviewsCount": 247,
+          "imagesCount": 56,
+          "imageCategories": [],
+          "scrapedAt": "2025-08-06T05:44:25.347Z",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "Closed"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "7 PM to 4 AM"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "7 PM to 4 AM"
+            },
+            {
+              "day": "Thursday",
+              "hours": "7 PM to 4 AM"
+            },
+            {
+              "day": "Friday",
+              "hours": "7 PM to 4 AM"
+            },
+            {
+              "day": "Saturday",
+              "hours": "7 PM to 4 AM"
+            },
+            {
+              "day": "Sunday",
+              "hours": "6 PM to 4 AM"
+            }
+          ],
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "Curbside pickup": true
+              },
+              {
+                "No-contact delivery": true
+              },
+              {
+                "Delivery": true
+              },
+              {
+                "Drive-through": true
+              },
+              {
+                "Takeout": true
+              },
+              {
+                "Dine-in": true
+              }
+            ],
+            "Highlights": [
+              {
+                "Fast service": true
+              },
+              {
+                "Great beer selection": true
+              },
+              {
+                "Great cocktails": true
+              },
+              {
+                "Live music": true
+              }
+            ],
+            "Popular for": [
+              {
+                "Lunch": true
+              }
+            ],
+            "Accessibility": [
+              {
+                "Wheelchair accessible seating": true
+              }
+            ],
+            "Offerings": [
+              {
+                "Alcohol": true
+              },
+              {
+                "Beer": true
+              },
+              {
+                "Cocktails": true
+              },
+              {
+                "Coffee": true
+              },
+              {
+                "Comfort food": true
+              },
+              {
+                "Hard liquor": true
+              },
+              {
+                "Small plates": true
+              },
+              {
+                "Wine": true
+              }
+            ],
+            "Dining options": [
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Seating": true
+              },
+              {
+                "Table service": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Bar onsite": true
+              },
+              {
+                "Restroom": true
+              }
+            ],
+            "Atmosphere": [
+              {
+                "Casual": true
+              },
+              {
+                "Cozy": true
+              },
+              {
+                "Trendy": true
+              }
+            ],
+            "Crowd": [
+              {
+                "Groups": true
+              }
+            ],
+            "Planning": [
+              {
+                "Accepts reservations": true
+              }
+            ],
+            "Payments": [
+              {
+                "Credit cards": true
+              },
+              {
+                "Debit cards": true
+              },
+              {
+                "NFC mobile payments": true
+              },
+              {
+                "Credit cards": true
+              }
+            ],
+            "Children": [
+              {
+                "High chairs": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=Bani%20Restaurant&query_place_id=ChIJF8lk4_v0wokRk4HS31h72fE",
+          "searchPageUrl": "https://www.google.com/maps/search/restaurant/@40.80099311231582,-73.84296222367298,13z?hl=en",
+          "searchString": "restaurant",
+          "language": "en",
+          "rank": 8,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AC9h4npTfp8be8tXSg2Y1MdZwmltfvUr-QLUdTYYl1dfuVD7iV9GZYEB4LiiumCpp56bf1rrVlxAub2FPk8uLB5CrusfUcLUwPGjDMDnqfQr1IWI69QtslM7ErkPWG-xKSGg4d93LWA=w408-h544-k-no",
+          "kgmid": "/g/1vs1stjn"
+        }
+      },
+      {
+        "json": {
+          "title": "El Paso Restaurant Bar",
+          "price": null,
+          "categoryName": "Bar & grill",
+          "address": "35-64 95th St, Jackson Heights, NY 11372",
+          "neighborhood": "Jackson Heights",
+          "street": "35-64 95th St",
+          "city": "Jackson Heights",
+          "postalCode": "11372",
+          "state": "New York",
+          "countryCode": "US",
+          "phone": "(347) 624-1470",
+          "phoneUnformatted": "+13476241470",
+          "claimThisBusiness": true,
+          "location": {
+            "lat": 40.7513755,
+            "lng": -73.8724363
+          },
+          "totalScore": 4.1,
+          "permanentlyClosed": false,
+          "temporarilyClosed": false,
+          "placeId": "ChIJARby-V1fwokRVzEAw03psRw",
+          "categories": [
+            "Bar & grill"
+          ],
+          "fid": "0x89c25f5df9f21601:0x1cb1e94dc3003157",
+          "cid": "2067690224133091671",
+          "reviewsCount": 45,
+          "imagesCount": 8,
+          "imageCategories": [],
+          "scrapedAt": "2025-08-06T05:44:25.347Z",
+          "googleFoodUrl": null,
+          "hotelAds": [],
+          "openingHours": [
+            {
+              "day": "Monday",
+              "hours": "2 PM to 4 AM"
+            },
+            {
+              "day": "Tuesday",
+              "hours": "2 PM to 4 AM"
+            },
+            {
+              "day": "Wednesday",
+              "hours": "2 PM to 4 AM"
+            },
+            {
+              "day": "Thursday",
+              "hours": "2 PM to 4 AM"
+            },
+            {
+              "day": "Friday",
+              "hours": "2 PM to 4 AM"
+            },
+            {
+              "day": "Saturday",
+              "hours": "2 PM to 4 AM"
+            },
+            {
+              "day": "Sunday",
+              "hours": "2 PM to 4 AM"
+            }
+          ],
+          "peopleAlsoSearch": [],
+          "placesTags": [],
+          "reviewsTags": [],
+          "additionalInfo": {
+            "Service options": [
+              {
+                "Takeout": true
+              },
+              {
+                "Dine-in": true
+              }
+            ],
+            "Highlights": [
+              {
+                "Fast service": true
+              },
+              {
+                "Great cocktails": true
+              }
+            ],
+            "Offerings": [
+              {
+                "Alcohol": true
+              },
+              {
+                "Beer": true
+              },
+              {
+                "Cocktails": true
+              },
+              {
+                "Food": true
+              },
+              {
+                "Food at bar": true
+              },
+              {
+                "Hard liquor": true
+              },
+              {
+                "Wine": true
+              }
+            ],
+            "Dining options": [
+              {
+                "Lunch": true
+              },
+              {
+                "Dinner": true
+              },
+              {
+                "Table service": true
+              }
+            ],
+            "Amenities": [
+              {
+                "Bar onsite": true
+              },
+              {
+                "Restroom": true
+              }
+            ],
+            "Atmosphere": [
+              {
+                "Casual": true
+              }
+            ],
+            "Crowd": [
+              {
+                "Groups": true
+              }
+            ],
+            "Planning": [
+              {
+                "Accepts reservations": true
+              }
+            ]
+          },
+          "gasPrices": [],
+          "url": "https://www.google.com/maps/search/?api=1&query=El%20Paso%20Restaurant%20Bar&query_place_id=ChIJARby-V1fwokRVzEAw03psRw",
+          "searchPageUrl": "https://www.google.com/maps/search/restaurant/@40.80099311231582,-73.84296222367298,13z?hl=en",
+          "searchString": "restaurant",
+          "language": "en",
+          "rank": 9,
+          "isAdvertisement": false,
+          "imageUrl": "https://lh3.googleusercontent.com/gps-cs-s/AC9h4noKQZ0gh3Kc8JSx4nHAKYIStR7Sh91SWXexX353dJvHgrM4wXDcC-YYk-wNQxFiAo_tTHGFRWrJGj8PR-KkptvJdsVSKrq0b3XfzlnZ97N0RcS28W81I-j4q4TIQlFqQ3E__S0Mjg=w424-h240-k-no",
+          "kgmid": "/g/11n0jpcdn_"
+        }
+      }
+    ],
+    "get status1": [
+      {
+        "json": {
+          "data": {
+            "id": "Ff8zTRMh2veHgLQMj",
+            "actId": "vFDBqKNXeGllTgOLz",
+            "userId": "1FFlYiumyKqhEl7pX",
+            "startedAt": "2025-08-06T16:45:59.413Z",
+            "finishedAt": "2025-08-06T16:46:06.662Z",
+            "status": "SUCCEEDED",
+            "statusMessage": "Finished! Total 1 requests: 1 succeeded, 0 failed.",
+            "isStatusMessageTerminal": true,
+            "meta": {
+              "origin": "API",
+              "userAgent": "axios/1.8.3"
+            },
+            "stats": {
+              "inputBodyLen": 35,
+              "migrationCount": 0,
+              "rebootCount": 0,
+              "restartCount": 0,
+              "durationMillis": 7039,
+              "resurrectCount": 0,
+              "runTimeSecs": 7.039,
+              "metamorph": 0,
+              "computeUnits": 0.0019552777777777776,
+              "memAvgBytes": 106060725.2403279,
+              "memMaxBytes": 121380864,
+              "memCurrentBytes": 0,
+              "cpuAvgUsage": 3.413876837227013,
+              "cpuMaxUsage": 74.05561811505508,
+              "cpuCurrentUsage": 0,
+              "netRxBytes": 65924,
+              "netTxBytes": 18680
+            },
+            "options": {
+              "build": "latest",
+              "timeoutSecs": 108000,
+              "memoryMbytes": 1024,
+              "maxItems": 1425,
+              "diskMbytes": 2048
+            },
+            "buildId": "LGGr0R9nvNQQPoswY",
+            "exitCode": 0,
+            "defaultKeyValueStoreId": "Z2TtZDS616JIGX0Dg",
+            "defaultDatasetId": "paXuornxlvINmCzMp",
+            "defaultRequestQueueId": "1ToQM55sbmW8SL40h",
+            "pricingInfo": {
+              "pricingModel": "PRICE_PER_DATASET_ITEM",
+              "pricePerUnitUsd": 0.003,
+              "unitName": "result",
+              "startedAt": "2025-03-31T00:00:00.000Z",
+              "createdAt": "2025-03-17T09:04:30.248Z",
+              "apifyMarginPercentage": 0.2,
+              "notifiedAboutFutureChangeAt": "2025-03-17T09:04:52.000Z",
+              "notifiedAboutChangeAt": "2025-03-31T02:35:20.563Z"
+            },
+            "platformUsageBillingModel": "DEVELOPER",
+            "generalAccess": "FOLLOW_USER_SETTING",
+            "buildNumber": "0.0.25",
+            "containerUrl": "https://uenof54grh1q.runs.apify.net",
+            "consoleUrl": "https://console.apify.com/view/runs/Ff8zTRMh2veHgLQMj"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "map scrapper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "get status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get status": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Get map Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "map scrapper": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get status1": {
+      "main": [
+        [
+          {
+            "node": "If..",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Web scrapper": {
+      "main": [
+        [
+          {
+            "node": "Wait..",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait..": {
+      "main": [
+        [
+          {
+            "node": "get status1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If..": {
+      "main": [
+        [
+          {
+            "node": "Get web Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait..",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get map Data": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Web scrapper",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get web Data": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0158ef4c-9662-475e-afc8-f784426fbac6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a77a4d1e1bfe09748ac31aab88a2996bf336125788583debd6e741b66fd38176"
+  },
+  "id": "TKfCfrSDbFEicnRe",
+  "tags": []
+}

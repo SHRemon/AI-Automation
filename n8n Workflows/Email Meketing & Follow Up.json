@@ -1,0 +1,329 @@
+{
+  "name": "Email Meketing & Follow Up",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -752,
+        -176
+      ],
+      "id": "a13151a7-97ae-4030-8c7c-460631fc8e1c",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1p0Kdv3uiyOEz3--r1cTWPmMFUb0nOhP__N7hL0EoT5c",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1p0Kdv3uiyOEz3--r1cTWPmMFUb0nOhP__N7hL0EoT5c/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Email Sent?"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -448,
+        -176
+      ],
+      "id": "a29d7bc6-8308-405a-9644-4a60e2f3b183",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "itFfx3rpoEEPHP2x",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "=Good new for you {{ $json.Name }}!",
+        "emailType": "text",
+        "message": "=Hey {{ $json.Name }},\n\nYou are nice person. And I want to say that this is your first Email marketing automation mail.\n\n\nThanks!",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        416,
+        -128
+      ],
+      "id": "37117f96-a560-40e7-ac15-413ef982bf12",
+      "name": "Send a message",
+      "webhookId": "da05e7f4-b454-413e-a247-83f5323756ce",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "AkhzEKH506yhpwFG",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        32,
+        -176
+      ],
+      "id": "010abc0f-b418-407c-8b7d-5380cba5c363",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "content": "Update sheet er niche send time e amra just jason use korlei current time peye gelam.\n\n{{ $now }}",
+        "height": 112,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        512,
+        -288
+      ],
+      "typeVersion": 1,
+      "id": "bd6e82b1-7a96-4ab8-8899-15d4583302d8",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1p0Kdv3uiyOEz3--r1cTWPmMFUb0nOhP__N7hL0EoT5c",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1p0Kdv3uiyOEz3--r1cTWPmMFUb0nOhP__N7hL0EoT5c/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $('Get row(s) in sheet').item.json.Name }}",
+            "Email Sent?": "Yes",
+            "Sending Time": "={{ $now }}"
+          },
+          "matchingColumns": [
+            "Name"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email Sent?",
+              "displayName": "Email Sent?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Sending Time",
+              "displayName": "Sending Time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        592,
+        -128
+      ],
+      "id": "f3eedca5-7663-4b21-9c40-225e88669a46",
+      "name": "Update sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "itFfx3rpoEEPHP2x",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 2
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        784,
+        -128
+      ],
+      "id": "929cc578-77e4-497c-a9e2-3b5269a744ca",
+      "name": "Wait",
+      "webhookId": "9a4684c5-dba2-4de0-a50a-cf5361f0b8f3"
+    },
+    {
+      "parameters": {
+        "maxItems": 5
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -208,
+        -176
+      ],
+      "id": "1e3d05ad-6a5e-4eb2-8f2e-2ecb62d6f8d0",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "content": "get Shet e filter add kore disi je Email sent jodi Empty \"\" hoy tahole segula nao.\n\nSo, alada Filter node lagbe nah.",
+        "height": 112,
+        "width": 256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -560,
+        -320
+      ],
+      "typeVersion": 1,
+      "id": "a88eedb4-9b92-4aa8-ad17-5291cd56b160",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Update sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update sheet": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "31320185-7f72-4205-8632-7c2822e58bab",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a77a4d1e1bfe09748ac31aab88a2996bf336125788583debd6e741b66fd38176"
+  },
+  "id": "T0Zh3IIoemhjFqjk",
+  "tags": []
+}

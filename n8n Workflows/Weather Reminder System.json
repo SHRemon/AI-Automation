@@ -1,0 +1,121 @@
+{
+  "name": "Weather Reminder System",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        -64
+      ],
+      "id": "99afb099-8afe-4f79-8ec6-a8585600c482",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "http://api.weatherapi.com/v1/forecast.json",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "Dhaka"
+            },
+            {
+              "name": "days",
+              "value": "1"
+            },
+            {
+              "name": "aqi",
+              "value": "no"
+            },
+            {
+              "name": "alerts",
+              "value": "no"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        64,
+        -64
+      ],
+      "id": "652336ac-1f83-436a-872c-5b08a16520bc",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "Zn3wqUDUUzDcAHPp",
+          "name": "Weather API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "pokepoke2mi@gmail.com",
+        "subject": "Weather Update",
+        "emailType": "text",
+        "message": "=Today's weather in  {{ $json.location.name }}  {{ $json.location.country }} is:\n\nLocal Time: {{ $json.location.localtime }}\n\nWeather type: {{ $json.forecast.forecastday[0].day.condition.text }}\n\nMax Temperature: {{ $json.forecast.forecastday[0].day.maxtemp_c }}'C\n\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        272,
+        -64
+      ],
+      "id": "801e00c4-dcc9-4a34-aaeb-bbb3c65c20ce",
+      "name": "Send a message",
+      "webhookId": "d32c26c3-42f4-4b54-b4f4-ab5699f15632",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "AkhzEKH506yhpwFG",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "39d41077-1bd5-4959-aaa2-7f537ef9a5af",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a77a4d1e1bfe09748ac31aab88a2996bf336125788583debd6e741b66fd38176"
+  },
+  "id": "Ntfr0JMpUtFH8Dic",
+  "tags": []
+}

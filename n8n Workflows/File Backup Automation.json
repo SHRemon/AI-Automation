@@ -1,0 +1,337 @@
+{
+  "name": "File Backup Automation",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        -112
+      ],
+      "id": "185de0e3-fc13-4ba1-84d3-94f96e1fd112",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 24
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -416,
+        80
+      ],
+      "id": "8bfede7a-2259-460b-8d7c-70c8d3ff611f",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        608,
+        -96
+      ],
+      "id": "865fa965-57bb-4c86-ad7e-e7cb1c160ce7",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "C0TjNdDgHQMNGfnC",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $json.currentDate }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "17qJq9dOIKfoaQMuRLSFBjKH2R-NJ03RY",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -48,
+        -112
+      ],
+      "id": "20ca2bae-4c69-4cfc-b03c-813c112c26cb",
+      "name": "Create folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "C0TjNdDgHQMNGfnC",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dateTime",
+      "typeVersion": 2,
+      "position": [
+        -208,
+        -112
+      ],
+      "id": "5e741fd4-0e33-4c49-b9f5-265523363b14",
+      "name": "Date & Time"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1nGFbUNW8SVRIwLlsM5mQyXMSgugBH9qb",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        112,
+        -112
+      ],
+      "id": "c117e666-0b24-497e-be7c-06754db1b025",
+      "name": "Search & get Files",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "C0TjNdDgHQMNGfnC",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Create folder').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        800,
+        -96
+      ],
+      "id": "6d6fc17a-88bd-4064-bedd-87276cf96df9",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "C0TjNdDgHQMNGfnC",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        320,
+        -112
+      ],
+      "id": "f8c9edcf-6620-4f79-81c8-e20d5ff0d247",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "sendTo": "pokepoke2mi@gmail.com",
+        "subject": "=Data Backup Done:",
+        "emailType": "text",
+        "message": "=Hey your Data Backup Done on Folder:  \n\n{{ $('Date & Time').item.json.currentDate }}\n\n\nHave a Nice Day.\n\nThanks!",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        672,
+        -304
+      ],
+      "id": "0d4af388-b569-4b29-98aa-ff06bdc9c656",
+      "name": "Send a message",
+      "webhookId": "c067c3ca-6b10-4b7f-a14f-da1ed9df3207",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "AkhzEKH506yhpwFG",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        496,
+        -304
+      ],
+      "id": "288fbd84-f09b-4f4f-b329-e967be180036",
+      "name": "Limit"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Date & Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create folder": {
+      "main": [
+        [
+          {
+            "node": "Search & get Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Date & Time": {
+      "main": [
+        [
+          {
+            "node": "Create folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search & get Files": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Date & Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6ba665f4-3e1f-494a-8408-a08e6c5409e1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a77a4d1e1bfe09748ac31aab88a2996bf336125788583debd6e741b66fd38176"
+  },
+  "id": "32kwygwiAYaYmvpN",
+  "tags": []
+}

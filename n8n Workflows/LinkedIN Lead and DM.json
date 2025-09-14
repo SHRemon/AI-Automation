@@ -1,0 +1,469 @@
+{
+  "name": "LinkedIN Lead and DM",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1168,
+        -224
+      ],
+      "id": "e3597fcd-fe7b-4ad1-9895-fcf38cdfef60",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/bebity~linkedin-jobs-scraper/runs",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n    \"location\": \"United States\",\n    \"proxy\": {\n        \"useApifyProxy\": true,\n        \"apifyProxyGroups\": [\n            \"RESIDENTIAL\"\n        ]\n    },\n    \"publishedAt\": \"r86400\",\n    \"rows\": 10,\n    \"title\": \"Automation\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -976,
+        -224
+      ],
+      "id": "ddfc2c0e-f89a-4f4f-8871-fbe2292dd1f5",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "5PIzRyEJsoOWFyH1",
+          "name": "Apify Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -976,
+        -32
+      ],
+      "id": "e75e225e-ae76-48c3-8956-ce1ac2d13966",
+      "name": "Wait",
+      "webhookId": "b9d0817a-6dbd-4761-a615-61566e730192"
+    },
+    {
+      "parameters": {
+        "url": "https://api.apify.com/v2/acts/bebity~linkedin-jobs-scraper/runs/last/dataset/items",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -944,
+        192
+      ],
+      "id": "850a1327-c131-438b-b929-7cb24e1e8b30",
+      "name": "HTTP Request1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "5PIzRyEJsoOWFyH1",
+          "name": "Apify Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1qn0jqQE__At6lPH5T9NVDZEWkiqKKD6gUoR_3lP5gC8",
+          "mode": "list",
+          "cachedResultName": "LinkediIN Job List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qn0jqQE__At6lPH5T9NVDZEWkiqKKD6gUoR_3lP5gC8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qn0jqQE__At6lPH5T9NVDZEWkiqKKD6gUoR_3lP5gC8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Compan Name": "={{ $json.companyName }}",
+            "Job Title": "={{ $json.title }}",
+            "Job Description": "={{ $json.description }}"
+          },
+          "matchingColumns": [
+            "Compan Name"
+          ],
+          "schema": [
+            {
+              "id": "Compan Name",
+              "displayName": "Compan Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Job Title",
+              "displayName": "Job Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job Description",
+              "displayName": "Job Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DM",
+              "displayName": "DM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -512,
+        80
+      ],
+      "id": "b4edf26f-ce5f-46f9-a143-9ab797b10161",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "itFfx3rpoEEPHP2x",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=This is the job details from linkedin job scrapper.\n\nDetails:\n\nCompany Name: {{ $json['Compan Name'] }}\nJob Title: {{ $json['Job Title'] }}\n\nJob description: {{ $json['Job Description'] }}\n",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a job DM writing Expert.\n\nBased on the given company detailes, as a job seeker, you have to write a very short to the point personalized DM for the comapny.\n\nNo subject or anything needed. Just a DM for linkedin message. nothing extra. and nothing left for me like[recriter name], [your name], etc. where I nned to rewrite. I want you to complete it as send ready for automation.\nfollow the below Json Structure:\n\n\n{\n  \"DM\": \"The DM Wriiten\"\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        32,
+        -16
+      ],
+      "id": "a2c5b814-9116-4e00-9012-609d1c91788f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -16,
+        240
+      ],
+      "id": "d62d04d1-9c86-4a06-a60d-7821a049178e",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ZzycOh1yrzW0UJ2C",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -240,
+        -32
+      ],
+      "id": "a575fe49-0edb-4fff-9b03-763926aef16d",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "maxItems": 3
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -736,
+        160
+      ],
+      "id": "1a73e75f-f459-4615-af54-b7fc9fb09922",
+      "name": "Limit1"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"DM\": \"The DM you Written\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        240,
+        240
+      ],
+      "id": "849dd4cb-c4dd-43a1-9238-2fd6d2c34239",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1qn0jqQE__At6lPH5T9NVDZEWkiqKKD6gUoR_3lP5gC8",
+          "mode": "list",
+          "cachedResultName": "LinkediIN Job List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qn0jqQE__At6lPH5T9NVDZEWkiqKKD6gUoR_3lP5gC8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qn0jqQE__At6lPH5T9NVDZEWkiqKKD6gUoR_3lP5gC8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Compan Name": "={{ $('Limit').item.json['Compan Name'] }}",
+            "Job Title": "=",
+            "Job Description": "=",
+            "DM": "={{ $json.output.DM }}"
+          },
+          "matchingColumns": [
+            "Compan Name"
+          ],
+          "schema": [
+            {
+              "id": "Compan Name",
+              "displayName": "Compan Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Job Title",
+              "displayName": "Job Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Job Description",
+              "displayName": "Job Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "DM",
+              "displayName": "DM",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        432,
+        0
+      ],
+      "id": "ef8d11d1-9d94-4d18-9ae9-b03b72c3beb2",
+      "name": "Append or update row in sheet2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "itFfx3rpoEEPHP2x",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Limit1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit1": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b85e22db-ac16-448e-9f05-a9e47620e16f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a77a4d1e1bfe09748ac31aab88a2996bf336125788583debd6e741b66fd38176"
+  },
+  "id": "aSWHvslcbSDV63DI",
+  "tags": []
+}

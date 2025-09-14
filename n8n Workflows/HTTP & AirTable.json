@@ -1,0 +1,325 @@
+{
+  "name": "HTTP & AirTable",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        32,
+        -224
+      ],
+      "id": "dd6e461b-ee57-4a7e-9e5b-b969127a2c45",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "appHJpIRY48Hso09j",
+          "mode": "list",
+          "cachedResultName": "My Base",
+          "cachedResultUrl": "https://airtable.com/appHJpIRY48Hso09j"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblVk83wX0M9K3MNi",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/appHJpIRY48Hso09j/tblVk83wX0M9K3MNi"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "rechqZYvL35PhfClC",
+            "Email": "remonshahariar@gmail.com",
+            "About": "Very good"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "About",
+              "displayName": "About",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Pending",
+                  "value": "Pending"
+                },
+                {
+                  "name": "Approved",
+                  "value": "Approved"
+                },
+                {
+                  "name": "Canceled",
+                  "value": "Canceled"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -160,
+        -384
+      ],
+      "id": "e5f36eb4-382d-4c96-af4b-b9331c13558a",
+      "name": "Create or update a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "R651dA0wHvUU26K5",
+          "name": "Airtable Access Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "airtable.com/appHJpIRY48Hso09j/tblVk83wX0M9K3MNi/viwn8rxg1GWCcXU1y\n\nhere first part is base: appHJpIRY48Hso09j\n2nd part: Table: tblVk83wX0M9K3MNi\n3rd part maybe: v0 id: viwn8rxg1GWCcXU1y",
+        "height": 112,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        336,
+        -448
+      ],
+      "typeVersion": 1,
+      "id": "2d1f8bc0-793f-48d5-b551-413abb88314d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4500c298-16a1-4be6-8afb-55352c0bded8",
+              "name": "Base id",
+              "value": "appHJpIRY48Hso09j",
+              "type": "string"
+            },
+            {
+              "id": "6966421d-1036-4732-9bb0-eaf42dcf5d3b",
+              "name": "Table id",
+              "value": "tblVk83wX0M9K3MNi",
+              "type": "string"
+            },
+            {
+              "id": "6d4ab2e6-cf6d-4438-aac9-3ae02b1b1596",
+              "name": "",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        -224
+      ],
+      "id": "e2b5d1f2-75af-4084-a608-1cc4d092af5f",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.airtable.com/v0/{{ $json['Base id'] }}/{{ $json['Table id'] }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        416,
+        -224
+      ],
+      "id": "74049143-cb8b-4d8c-8f6e-baec3b9f450b",
+      "name": "Airtable List record",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "fRz8p3UFkYf4oyh4",
+          "name": "Airtable Access"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.airtable.com/v0/{{ $('Edit Fields').item.json['Base id'] }}/{{ $('Edit Fields').item.json['Table id'] }}/{{ $json.records[1].id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        608,
+        -224
+      ],
+      "id": "a9b82fd3-8ec6-4df6-b7f1-afddb5bd17bd",
+      "name": "Airtable Get record",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "fRz8p3UFkYf4oyh4",
+          "name": "Airtable Access"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.airtable.com/v0/{{ $('Edit Fields').item.json['Base id'] }}/{{ $('Edit Fields').item.json['Table id'] }}/{{ $json.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"fields\": {\n    \"Email\": \"pokepoke2mi@gmail.com\",\n    \"Name\": \"Mine\",\n    \"Status\": \"Approved\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        800,
+        -224
+      ],
+      "id": "4bb0a218-65be-46d2-8c65-75090ce5f43c",
+      "name": "Airtable Update record",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "fRz8p3UFkYf4oyh4",
+          "name": "Airtable Access"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Data Update er jonno \nMethode: Patch use kori, vitore ase dekh.",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        752,
+        -80
+      ],
+      "typeVersion": 1,
+      "id": "ec612588-c2b7-4392-9577-5ae9654303a0",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Airtable List record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable List record": {
+      "main": [
+        [
+          {
+            "node": "Airtable Get record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable Get record": {
+      "main": [
+        [
+          {
+            "node": "Airtable Update record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "95881f25-0f17-4491-9ca8-f799882a1ab4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a77a4d1e1bfe09748ac31aab88a2996bf336125788583debd6e741b66fd38176"
+  },
+  "id": "6ewBxp5LM6Tfs7XB",
+  "tags": []
+}

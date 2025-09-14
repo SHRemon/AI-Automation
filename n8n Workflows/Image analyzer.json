@@ -1,0 +1,207 @@
+{
+  "name": "Image analyzer",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Check the car number plate properly and extract the number.\n\n",
+        "options": {
+          "systemMessage": "=You are an Expert at extracting car number plates number.\n\nAnd give me extracted number, no extra things needed.\n\nCheck the image carefully, and then extract the exact number shown in the image, take time, but I needed exact number.",
+          "passthroughBinaryImages": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        320,
+        -48
+      ],
+      "id": "5cf192f5-0c70-4d09-9ab8-5d1af1f73ebc",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        288,
+        208
+      ],
+      "id": "6795217a-c37c-4cf1-bf28-e6bd597925fb",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RSqLJpt7MPIFn62D",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -288,
+        0
+      ],
+      "id": "68ff6b4a-ffaa-4401-a53c-12bbd82b6274",
+      "name": "Telegram Trigger",
+      "webhookId": "0d80d292-af01-4e17-aa26-77427b9c11e7",
+      "credentials": {
+        "telegramApi": {
+          "id": "xUZt42hx3uN6fMT5",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=This is the number plate: {{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        784,
+        0
+      ],
+      "id": "ab9b801d-39ad-4cc4-a039-4842d0d5e684",
+      "name": "Send a text message",
+      "webhookId": "702b931b-0001-46bb-a903-b6f1aff2771e",
+      "credentials": {
+        "telegramApi": {
+          "id": "xUZt42hx3uN6fMT5",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.photo[1].file_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -80,
+        0
+      ],
+      "id": "54657faa-c793-4886-b224-9faf8c9c344a",
+      "name": "download the image",
+      "webhookId": "98fdb808-21df-4d98-ab30-f972b28aa4f6",
+      "credentials": {
+        "telegramApi": {
+          "id": "xUZt42hx3uN6fMT5",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// --- Configuration ---\n// Set your desired output format here. This example defaults to JPG.\nconst targetMimeType = 'image/jpeg';\nconst targetExtension = 'jpg';\n\n// For PNG, uncomment the two lines below:\n// const targetMimeType = 'image/png';\n// const targetExtension = 'png';\n// --------------------\n\n\n// Loop through all items passed to this node.\nfor (const item of items) {\n  // In n8n, binary data is stored in the 'binary' property of an item.\n  // 'data' is the default key for the first binary property.\n  const binaryData = item.binary.data;\n\n  // If there is no binary data on this item, skip it and move to the next one.\n  if (!binaryData) {\n    continue;\n  }\n\n  // Get the original filename from the binary object's metadata.\n  const originalFileName = binaryData.fileName || 'file';\n\n  // Create the new filename with the correct extension.\n  // This logic finds the last dot and replaces the extension.\n  const baseName = originalFileName.substring(0, originalFileName.lastIndexOf('.')) || originalFileName;\n  const newFileName = `${baseName}.${targetExtension}`;\n\n  // THIS IS THE CORE LOGIC:\n  // We are directly modifying the metadata properties of the existing binary object.\n  // The underlying file/data is not changed, only how n8n labels it.\n  binaryData.fileName = newFileName;\n  binaryData.mimeType = targetMimeType;\n\n  // For consistency, we also update the corresponding JSON data.\n  // This helps if subsequent nodes look at the JSON part of the item.\n  item.json.fileName = newFileName;\n  item.json.mimeType = targetMimeType;\n}\n\n// Return the modified items to be passed to the next node in the workflow.\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        128,
+        -32
+      ],
+      "id": "3b60489c-7ca8-4aea-aecb-0b6d24535f21",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "content": "code for converting image meme type to jpg or png.",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        64,
+        -160
+      ],
+      "typeVersion": 1,
+      "id": "19f2fd87-d1b3-499f-b2c5-c0913a471a7d",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "download the image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "download the image": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c37c73d6-bc31-4f7d-8455-7af0b84eb08a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a77a4d1e1bfe09748ac31aab88a2996bf336125788583debd6e741b66fd38176"
+  },
+  "id": "4SA6DV9LEYBNeGmw",
+  "tags": []
+}

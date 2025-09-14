@@ -1,0 +1,303 @@
+{
+  "name": "Basic Gmail Manger Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=My name is Remon. \n\nThe email I received in my inbox:\n\nSender/From: {{ $json.From }}\n\nSubject:{{ $json.Subject }}\n\nBody: {{ $json.snippet }}\n\n",
+        "options": {
+          "systemMessage": "=You are an expert Gmail manager.\nYou will read the message and will send a reply to the message based on the mail received, in a human tone, simple manner.\n\nNo robotic tone or too professional needed.\n\nbefore sending you must read all the previous mails of the sender {{ $json.From }} to get the the context. if the current mail is related to any previous mail or mentioned then reply based on that. \n\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        -160,
+        -96
+      ],
+      "id": "d884d4cd-bb51-46f0-90d3-caf9b93e1e79",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        128
+      ],
+      "id": "98a83504-91df-49a0-9bb8-da33726faf69",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ZzycOh1yrzW0UJ2C",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "labelIds": [
+            "INBOX"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -896,
+        -96
+      ],
+      "id": "f2b2c5e6-2d10-4bf8-9b39-6f65c615dd8c",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "AkhzEKH506yhpwFG",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 3,
+        "filters": {
+          "labelIds": [
+            "INBOX"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -688,
+        -96
+      ],
+      "id": "5b45e2cd-1257-45c0-a29d-96d3cbd01716",
+      "name": "Get many messages",
+      "webhookId": "aa21ecba-e77a-42f7-ad16-dee9b666a9b9",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "AkhzEKH506yhpwFG",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b8efb90d-399c-4c2b-9094-9d9ca2b64f86",
+              "leftValue": "={{ $json.labels[3].id }}",
+              "rightValue": "UNREAD",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": false
+        }
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -480,
+        -96
+      ],
+      "id": "703da194-b5f2-456f-a7b5-5e6300f6ab34",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Filter').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        272,
+        -96
+      ],
+      "id": "1835c972-5fe0-4453-bdf3-8acecfcf74b4",
+      "name": "Mark a message as read",
+      "webhookId": "0efce87e-0f1e-48ed-b7fa-3c3812808652",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "AkhzEKH506yhpwFG",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "emailType": "text",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        176,
+        128
+      ],
+      "id": "afbe1e48-d7ac-44d6-a4d3-4b4effb8c536",
+      "name": "Send a message",
+      "webhookId": "f2fd3bb1-4646-4165-92cf-00fa323d435e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "AkhzEKH506yhpwFG",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 3,
+        "filters": {
+          "labelIds": [
+            "INBOX"
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -16,
+        144
+      ],
+      "id": "6878f19d-699b-46d7-8d37-3ca3e3f72630",
+      "name": "get all mail from sender for context",
+      "webhookId": "b0446183-ed9d-41fc-b656-418e9103d81a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "AkhzEKH506yhpwFG",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get many messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many messages": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Mark a message as read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get all mail from sender for context": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0cec70da-42d3-44b7-9619-cd7425a7b2fe",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a77a4d1e1bfe09748ac31aab88a2996bf336125788583debd6e741b66fd38176"
+  },
+  "id": "WrBssqiJlotaG54z",
+  "tags": []
+}

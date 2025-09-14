@@ -1,0 +1,325 @@
+{
+  "name": "SEO Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "SEO analyzer",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Enter your website URL",
+              "placeholder": "google.com",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -1232,
+        -48
+      ],
+      "id": "229d0482-c2de-4f0d-9970-916cef54bc47",
+      "name": "On form submission",
+      "webhookId": "0200d75c-481c-48bd-aa70-a651738c3097"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json['Enter your website URL'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -928,
+        48
+      ],
+      "id": "a1b7a6b0-8839-4993-b97f-890401ec18d0",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        544
+      ],
+      "id": "eec44810-57f6-4533-a4bc-f31e249ce987",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RSqLJpt7MPIFn62D",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=I have an website data below.\nCheck it and suggest me how I can improve to make it more SEO friendly by acting SEO expert. And then send the details to my mail.\n\nData:\n\n{{ $json.data }}",
+        "options": {
+          "systemMessage": "=You are an SEO expert. You will analyze website data and suggest best things in a structure way to make it search friendly and improve for SEO.\n\nGive in a short structureed way, not too many detaisls needed.\n\nAnd send the detailes to the email."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        -544,
+        -80
+      ],
+      "id": "130d4758-c94f-40a9-873d-fdb51393a438",
+      "name": "SEO Suggestion"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=I have an website data below.\nCheck it and suggest me how I can improve to make it more SEO friendly by content. and give content ideas and then send to the mail.\n\nData:\n\n{{ $json.data }}",
+        "options": {
+          "systemMessage": "=You are an SEO content expert. You will analyze website data and suggest best things in a structure way to make the contents search friendly and improve for SEO.\n\nGive me content ideas in a short structureed way, not too many detaisls needed."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        -480,
+        208
+      ],
+      "id": "88e2c17b-fb09-44c9-9948-d2f1c2f35e0e",
+      "name": "Content Suggestion"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -64,
+        48
+      ],
+      "id": "80f708c8-e3dd-49cc-8fcc-46ef4cc62bd0",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "sendTo": "pokepoke2mi@gmail.com",
+        "subject": "={{ $json.output.subject }}",
+        "emailType": "text",
+        "message": "={{ $json.output.body }}\n\n",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        736,
+        48
+      ],
+      "id": "77f3d74a-2764-425c-be8f-7e28788ecc7b",
+      "name": "Send a message",
+      "webhookId": "5c6b1ee8-f425-4efd-9564-1712616b35fc",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "AkhzEKH506yhpwFG",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "output"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        128,
+        48
+      ],
+      "id": "0e92bcf3-e2b9-45be-966d-aab1ad3c548b",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=I got Two ouput from two agent rreceived, one is from SEO strategy idea, another one is content idea. Both are given below. \n\nI want you to write short summary type with both headline in short, nicely presented for text mail, no html structure or no messy. and then send the mail.\n\nSEO strategy:{{ $json.output[0] }}\n\nContent Idea: {{ $json.output[1] }}\n\nAnd give in the belwo output structure:\n{\n  \"subject\": \"Tera SEO\",\n  \"body\": \"Your Email Body Content\"\n}\n",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        336,
+        48
+      ],
+      "id": "db21f044-9911-420b-90f7-70bf02e0462b",
+      "name": "Email summary writter"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"subject\": \"Your Email Subject\",\n  \"body\": \"Your Email Body Content\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        512,
+        256
+      ],
+      "id": "ec746f94-2847-41da-a470-2bb0fde1d63a",
+      "name": "Structured Output Parser"
+    }
+  ],
+  "pinData": {
+    "On form submission": [
+      {
+        "json": {
+          "Enter your website URL": "https://leathergarden.com/",
+          "submittedAt": "2025-08-04T06:21:48.065-04:00",
+          "formMode": "test"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "SEO Suggestion",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Content Suggestion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "SEO Suggestion",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Content Suggestion",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Email summary writter",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SEO Suggestion": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Content Suggestion": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Email summary writter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email summary writter": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Email summary writter",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "dfb91343-f182-4dfd-835c-6e3bd89ac3e7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a77a4d1e1bfe09748ac31aab88a2996bf336125788583debd6e741b66fd38176"
+  },
+  "id": "Jm6nq3IxJOWXpvva",
+  "tags": []
+}

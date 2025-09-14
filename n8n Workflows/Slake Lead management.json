@@ -1,0 +1,265 @@
+{
+  "name": "Slake Lead management",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "First Good Automation",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "What is your name?",
+              "placeholder": "name"
+            },
+            {
+              "fieldLabel": "What is your email?"
+            },
+            {
+              "fieldLabel": "What you want?"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -976,
+        -144
+      ],
+      "id": "e750362f-1c5e-4801-9840-f048c6d4ebd5",
+      "name": "On form submission",
+      "webhookId": "b3d82b27-8ff0-42b0-864d-c92bfe7960f9"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09872KNC3D",
+          "mode": "list",
+          "cachedResultName": "new-channel"
+        },
+        "text": "=Congratulations! You got a lead.\n\nName:{{ $('On form submission').item.json['What is your name?'] }}\n\nEmail:{{ $('On form submission').item.json['What is your email?'] }}\n\nWants: {{ $('On form submission').item.json['What you want?'] }}\n\nLead Quality: {{ $json.output['Lead Qality'] }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        -48,
+        -288
+      ],
+      "id": "9fe04353-d938-4984-b8eb-85ec50489b37",
+      "name": "Send a message",
+      "webhookId": "d26978f6-b6ed-4f72-8222-1afb000ad2b3",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "pluuOv2tD0ogxOBB",
+          "name": "Slack "
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=you are lead management specialist.\nCheck the below details:\n{{ $json['What is your name?'] }}\n{{ $json['What is your email?'] }}\nWant: {{ $json['What you want?'] }}\n\n\nIf they want \"success\", then make it as Grade: \"A\", otherwise grade: \"B\".\n\nJSON format:\n\"Lead Qality\": \"Enter the grade\"\n\n\n",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        -768,
+        -176
+      ],
+      "id": "6aeb0e5c-211f-4e90-abce-ce3449ba38ea",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -832,
+        80
+      ],
+      "id": "f236e184-f0c0-49c5-9efd-1dd5ed9121d7",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ZzycOh1yrzW0UJ2C",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"Lead Qality\": \"Enter the grade\"\n\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -592,
+        80
+      ],
+      "id": "36496d7f-9502-4ddb-9844-53e62adb4e90",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "81ef88c9-8b7b-4c37-b15c-a9b2e5b16c24",
+              "leftValue": "={{ $json.output['Lead Qality'] }}",
+              "rightValue": "A",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "f3bbca3e-4122-4a8d-84e5-054e8728d842",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -352,
+        -112
+      ],
+      "id": "d86a273c-0d50-4d52-9bef-6aba01c5b4fe",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('On form submission').item.json['What is your email?'] }}",
+        "subject": "Lead quality dekh!",
+        "emailType": "text",
+        "message": "=Valo nah tor lead!\n\nGrade paisos: ",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -48,
+        16
+      ],
+      "id": "70e29af0-2983-4b25-97a9-19109d64591b",
+      "name": "Send a message1",
+      "webhookId": "1f4d9c96-5ba6-4ad7-9f95-716c5fa69c07",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "AkhzEKH506yhpwFG",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e8bfc53b-88fd-449a-b781-29632ceca711",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a77a4d1e1bfe09748ac31aab88a2996bf336125788583debd6e741b66fd38176"
+  },
+  "id": "Qa1V3eCgij5ea9ib",
+  "tags": []
+}
