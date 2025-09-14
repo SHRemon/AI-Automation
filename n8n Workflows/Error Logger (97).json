@@ -1,0 +1,149 @@
+{
+  "createdAt": "2025-09-02T08:35:02.275Z",
+  "updatedAt": "2025-09-02T09:02:08.000Z",
+  "id": "tt2hBh1o1riBLwAQ",
+  "name": "Error Logger (97)",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        16
+      ],
+      "id": "dd64f3a0-3303-4f7e-8080-fb21e1eed5d2",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1SjEQj_3XUshz164pRZBZ0OqXDlW-ZSQ8nlKFVOfIDU0",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1SjEQj_3XUshz164pRZBZ0OqXDlW-ZSQ8nlKFVOfIDU0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{$now.format('yyyy-MM-dd hh:mma')}}",
+            "Workflow": "={{ $json.workflow.name }}",
+            "URL": "={{ $json.execution.url }}",
+            "Error Message": "={{ $json.execution.error.message }}",
+            "Node": "={{ $json.execution.error.node.name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Workflow",
+              "displayName": "Workflow",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Node",
+              "displayName": "Node",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Error Message",
+              "displayName": "Error Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "d5309a67-91eb-47e1-baf8-c0cfffade374",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "PZEKyg5VO7GCweRg",
+          "name": "Google Sheets account 23"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Dhaka",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "tt2hBh1o1riBLwAQ"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "fd531a17-f384-4ed5-a173-9771d7a839c6",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-09-02T08:35:02.297Z",
+      "updatedAt": "2025-09-02T08:35:02.297Z",
+      "role": "workflow:owner",
+      "workflowId": "tt2hBh1o1riBLwAQ",
+      "projectId": "7rdDDhbUHXMT0K8Z"
+    }
+  ],
+  "tags": []
+}

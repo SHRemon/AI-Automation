@@ -1,0 +1,833 @@
+{
+  "createdAt": "2025-08-12T08:14:55.707Z",
+  "updatedAt": "2025-09-02T09:05:56.000Z",
+  "id": "gLPhN6vlGQDdZUN7",
+  "name": "LinkedIn LeadGen & Outreach",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appNu73P7x0WlrzV1",
+          "mode": "list",
+          "cachedResultName": "Lead Generation CRM",
+          "cachedResultUrl": "https://airtable.com/appNu73P7x0WlrzV1"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblDw4byXuRVa4jvW",
+          "mode": "list",
+          "cachedResultName": "campaign",
+          "cachedResultUrl": "https://airtable.com/appNu73P7x0WlrzV1/tblDw4byXuRVa4jvW"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Target Role": "={{ $json.query.jobtitle }}",
+            "Target Location": "={{ $json.query.location }}",
+            "Target Industry": "={{ $json.query.industry }}",
+            "User Email": "={{ $json.query.email }}",
+            "Leads Found": 0
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Campaign ID",
+              "displayName": "Campaign ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Target Role",
+              "displayName": "Target Role",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Target Location",
+              "displayName": "Target Location",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Target Industry",
+              "displayName": "Target Industry",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "User Email",
+              "displayName": "User Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Date Started",
+              "displayName": "Date Started",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Running",
+                  "value": "Running"
+                },
+                {
+                  "name": "Completed",
+                  "value": "Completed"
+                },
+                {
+                  "name": "Failed",
+                  "value": "Failed"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Leads Found",
+              "displayName": "Leads Found",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Leads",
+              "displayName": "Leads",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -624,
+        -240
+      ],
+      "id": "13536f3c-8c18-4a46-9bcb-48ae9fc36d1a",
+      "name": "Create a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "vKkAP96qFA9WTYrZ",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/customsearch/v1",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "AIzaSyBMj0sTZBaoXlEgCPTJsgMvqRh24OrQtoQ"
+            },
+            {
+              "name": "cx",
+              "value": "23bc4e50560ae4d78"
+            },
+            {
+              "name": "q",
+              "value": "=\"{{ $json.fields['Target Role'] }}\" in \"{{ $json.fields['Target Location'] }}\" in \"{{ $json.fields['Target Industry'] }}\" site:linkedin.com/in/"
+            },
+            {
+              "name": "num",
+              "value": "5"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -400,
+        -240
+      ],
+      "id": "1ec67e6a-97c8-4aa1-af0a-62c445f78109",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "// This code is now correct. It accesses the nested results array.\n\n// 1. Access the single item coming from the HTTP Request node.\nconst inputData = $input.item.json;\n\n// 2. The actual search results are in a property called \"items\".\nconst searchResults = inputData.items;\n\n// 3. If Google found no results, return an empty array to stop.\nif (!searchResults) {\n  return [];\n}\n\n// This array will hold our clean lead objects.\nconst cleanLeads = [];\n\n// 4. Loop through the correct searchResults array.\nfor (const result of searchResults) {\n\n  // --- Data Extraction ---\n  // This logic is now operating on the correct data.\n  const linkedinUrl = result.link;\n  const firstName = result.pagemap?.metatags?.[0]?.['profile:first_name'];\n  const lastName = result.pagemap?.metatags?.[0]?.['profile:last_name'];\n\n  let fullName = `${firstName || ''} ${lastName || ''}`.trim();\n  if (!fullName && result.title) {\n    fullName = result.title.split('-')[0].trim();\n  }\n\n  let jobTitle = '';\n  if (result.title) {\n    const titleParts = result.title.split(' - ');\n    if (titleParts.length > 1) {\n      jobTitle = titleParts[1].split('|')[0].trim();\n    }\n  }\n  \n  // --- Construct the Clean Output Object ---\n  if (linkedinUrl) {\n    cleanLeads.push({\n      json: {\n        fullName: fullName,\n        firstName: firstName,\n        linkedinUrl: linkedinUrl,\n        jobTitle: jobTitle\n      }\n    });\n  }\n}\n\n// Return the entire array of clean lead objects.\nreturn cleanLeads;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -160,
+        -240
+      ],
+      "id": "1c2342ba-6373-43f0-aaf9-4772aa93bb5d",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        64,
+        -240
+      ],
+      "id": "435be8bc-09c0-4900-ac7f-4939cca699bc",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"Status\": \"Passed/Eliminated\",\n  \"Full Name\": \"Full name from data\",\n  \"First Name\": \"First name from data\",\n  \"LinkedIn URL\": \"LinkedIn URL from data\",\n  \"jobTitle\": \"jobTitle from data\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        592,
+        16
+      ],
+      "id": "81440a8a-ee8f-4b2f-9dfb-571d7d45e3d5",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        256,
+        0
+      ],
+      "id": "c09020e3-51d7-436c-b81e-355a224af939",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "NCgfFmhZp4QKm05P",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appNu73P7x0WlrzV1",
+          "mode": "list",
+          "cachedResultName": "Lead Generation CRM",
+          "cachedResultUrl": "https://airtable.com/appNu73P7x0WlrzV1"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblJzuNfVpu8ToXDP",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/appNu73P7x0WlrzV1/tblJzuNfVpu8ToXDP"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        416,
+        80
+      ],
+      "id": "45f83ab0-0ed0-4393-9da8-6125e0c0be52",
+      "name": "Search records in Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "vKkAP96qFA9WTYrZ",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appNu73P7x0WlrzV1",
+          "mode": "list",
+          "cachedResultName": "Lead Generation CRM",
+          "cachedResultUrl": "https://airtable.com/appNu73P7x0WlrzV1"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblJzuNfVpu8ToXDP",
+          "mode": "list",
+          "cachedResultName": "Leads",
+          "cachedResultUrl": "https://airtable.com/appNu73P7x0WlrzV1/tblJzuNfVpu8ToXDP"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Lead Score": 0,
+            "Full Name": "={{ $json.output['Full Name'] }}",
+            "First Name": "={{ $json.output['First Name'] }}",
+            "LinkedIn URL": "={{ $json.output['LinkedIn URL'] }}",
+            "Job Title": "={{ $json.output.jobTitle }}",
+            "campaign": "={{ [$('Create a record').item.json.id] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "LinkedIn URL",
+              "displayName": "LinkedIn URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Job Title",
+              "displayName": "Job Title",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company Website",
+              "displayName": "Company Website",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email Status",
+              "displayName": "Email Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Verified",
+                  "value": "Verified"
+                },
+                {
+                  "name": "Risky",
+                  "value": "Risky"
+                },
+                {
+                  "name": "Not Found",
+                  "value": "Not Found"
+                },
+                {
+                  "name": "Bounced",
+                  "value": "Bounced"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Lead Score",
+              "displayName": "Lead Score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "AI Justification",
+              "displayName": "AI Justification",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Personalized Message",
+              "displayName": "Personalized Message",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Outreach Status",
+              "displayName": "Outreach Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "New",
+                  "value": "New"
+                },
+                {
+                  "name": "Enriching",
+                  "value": "Enriching"
+                },
+                {
+                  "name": "Email Not Found",
+                  "value": "Email Not Found"
+                },
+                {
+                  "name": "Ready for Outreach",
+                  "value": "Ready for Outreach"
+                },
+                {
+                  "name": "Email 1 Sent",
+                  "value": "Email 1 Sent"
+                },
+                {
+                  "name": "Waiting for Reply",
+                  "value": "Waiting for Reply"
+                },
+                {
+                  "name": "Replied",
+                  "value": "Replied"
+                },
+                {
+                  "name": "Do Not Contact",
+                  "value": "Do Not Contact"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last Updated",
+              "displayName": "Last Updated",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Error Notes",
+              "displayName": "Error Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "campaign",
+              "displayName": "campaign",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        816,
+        -240
+      ],
+      "id": "d809d6b4-6161-4500-abf5-f1334a2b0f0a",
+      "name": "Create a record1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "vKkAP96qFA9WTYrZ",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "caa3ae4d-2e5d-41f8-b3e6-ebcf2d553a10",
+              "leftValue": "={{ $json.output.Status }}",
+              "rightValue": "Passed",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        -192
+      ],
+      "id": "cc86e04a-54bf-4633-8752-82f78afaab4c",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=you will check the below data and comapre them withe the lead table from my airtable leads, \nIf you find duplicate linkeinUrl exact same and also exact same character by carecter & word by word then say \"Eliminated:, otherwise \"Passed\".\n\nData:\nFull Name: {{ $json.firstName }}\nFirst Name:{{ $json.firstName }}\nLinkedIn URL:{{ $json.linkedinUrl }}\njobTitle:{{ $json.jobTitle }}\n\n\ngive proivvide the below output Json style:\n{\"Status\": \"Passed/Eliminated\",\n\"Full Name\": \"Full name from data\"\n\"First Name\": \"First name from data\"\n\"LinkedIn URL\": \"LinkedIn URL from data\"\n\"jobTitle\":\"jobTitle from data\"\n\n}\n",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        -208
+      ],
+      "id": "b4560442-304c-4371-9ffe-804007865baf",
+      "name": "Duplicate & validate"
+    },
+    {
+      "parameters": {
+        "path": "leadGen-LinkedIN",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -864,
+        -240
+      ],
+      "id": "64bd0cc2-584d-4e6c-82ed-10b9af4a8a93",
+      "name": "Webhook",
+      "webhookId": "78bc1048-3465-466c-8a38-2cc544fe26a2"
+    }
+  ],
+  "connections": {
+    "Create a record": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Duplicate & validate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Duplicate & validate",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Duplicate & validate",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search records in Airtable": {
+      "ai_tool": [
+        [
+          {
+            "node": "Duplicate & validate",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Create a record1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Duplicate & validate": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a record1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Create a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Dhaka",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "server.automationlearners.pro",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:141.0) Gecko/20100101 Firefox/141.0",
+            "accept": "*/*",
+            "accept-encoding": "gzip, br",
+            "accept-language": "en-US,en;q=0.5",
+            "cdn-loop": "cloudflare; loops=1",
+            "cf-connecting-ip": "103.73.44.120",
+            "cf-ipcountry": "BD",
+            "cf-ray": "96e7f5b3b820e87e-DAC",
+            "cf-visitor": "{\"scheme\":\"https\"}",
+            "content-type": "application/json",
+            "origin": "https://id-preview--da966a3e-9579-4223-8f81-17c2f12c311e.lovable.app",
+            "priority": "u=0",
+            "referer": "https://id-preview--da966a3e-9579-4223-8f81-17c2f12c311e.lovable.app/",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "cross-site",
+            "sec-gpc": "1",
+            "x-forwarded-for": "172.68.163.162",
+            "x-forwarded-host": "server.automationlearners.pro",
+            "x-forwarded-port": "443",
+            "x-forwarded-proto": "https",
+            "x-forwarded-server": "8c2ff9ef58de",
+            "x-real-ip": "172.68.163.162"
+          },
+          "params": {},
+          "query": {
+            "jobtitle": "Head of Purchase",
+            "location": "Germany",
+            "industry": "Information technology",
+            "email": "pokepoke22mi@gmail.com",
+            "source": "oveable-landing"
+          },
+          "body": {},
+          "webhookUrl": "https://server.automationlearners.pro/webhook-test/leadGen-LinkedIN",
+          "executionMode": "test"
+        }
+      }
+    ]
+  },
+  "versionId": "44c80194-67a9-411b-b9f4-77f802da67ca",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-08-12T08:14:55.714Z",
+      "updatedAt": "2025-08-12T08:14:55.714Z",
+      "role": "workflow:owner",
+      "workflowId": "gLPhN6vlGQDdZUN7",
+      "projectId": "7rdDDhbUHXMT0K8Z"
+    }
+  ],
+  "tags": []
+}

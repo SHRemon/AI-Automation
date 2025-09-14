@@ -1,0 +1,44 @@
+{
+  "createdAt": "2025-09-05T11:58:55.095Z",
+  "updatedAt": "2025-09-05T11:58:55.095Z",
+  "id": "7ustRCZgHXNigxOJ",
+  "name": "My workflow 103",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "path": "sociomate",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0e4b9186-9c85-45f3-b6ca-c726c6624afb",
+      "name": "Webhook",
+      "webhookId": "d38d7b01-b8f6-4c5b-8411-0072acdf062c"
+    }
+  ],
+  "connections": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "2fc987ef-da8f-4005-8e60-01404b4355d3",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "createdAt": "2025-09-05T11:58:55.117Z",
+      "updatedAt": "2025-09-05T11:58:55.117Z",
+      "role": "workflow:owner",
+      "workflowId": "7ustRCZgHXNigxOJ",
+      "projectId": "7rdDDhbUHXMT0K8Z"
+    }
+  ],
+  "tags": []
+}

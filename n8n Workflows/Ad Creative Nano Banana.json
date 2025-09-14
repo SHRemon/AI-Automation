@@ -1,0 +1,327 @@
+{
+  "createdAt": "2025-09-10T18:40:53.134Z",
+  "updatedAt": "2025-09-12T12:34:55.000Z",
+  "id": "Yu01JOQP1f3Cg7BZ",
+  "name": "Ad Creative Nano Banana",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "nanoadz",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -336,
+        672
+      ],
+      "id": "807e31cc-4cd6-40bf-b903-ad759bf66523",
+      "name": "Webhook",
+      "webhookId": "498ee07c-cde7-499c-8af1-424c13834d59"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst updatedItems = items.map((item) => {\n  const url = `data:image/png;base64,${item?.json?.data}`;\n  return { url };\n});\nreturn updatedItems;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        32,
+        672
+      ],
+      "id": "0c34070b-d113-4032-8fc6-c9dba916e496",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "respondWith": "binary",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1296,
+        656
+      ],
+      "id": "cf131445-38cb-4a87-8d00-6ba09acaa8ea",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "binaryPropertyName": "image",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        672
+      ],
+      "id": "0d2fdd4a-326b-4bfb-9cbf-6f33cf5faafe",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "text": "=User Provided Ad/Content Description: {{ $('Webhook').item.json.body.prompt }}\nMake the prompt to the point clean.\nYou are an expert social media ad designer and AI prompt engineer.\n\nYour purpose is to translate the user’s description into a clean, detailed, and effective prompt for generating social media ad or content images.\n(An image is given with the prompt)\n\nRules:\n\nThe prompt should include the line: \"Must add the given image point to point similar and make content out of it\".\n\nStrictly follow the user’s description, but:\n\n-Remove or replace anything related to alcohol, cigarettes, drugs, nudity, immodesty, humans, animals, or birds or anything that is live or can have live should be prohibited. Don't add anything something relavant or represent like those.\n\n-If such content appears, adapt the description into a halal, neutral, professional style.\n\n-If a reference image/logo is provided, it must be seamlessly incorporated into the design.\n\n-Output must default to square format (1080×1080px), optimized for Social media.\n\n-Ensure bold typography, high-contrast colors, and clear focal points suitable for ads.\n\n-Always maintain a modern, clean, halal-compliant, and professional advertising style.\n\n-Never include inappropriate, offensive, or non-halal elements, even if requested by the user.",
+        "attributes": {
+          "attributes": [
+            {
+              "name": "Image Prompt",
+              "description": "=Social media ad prompt — remember that a reference image/logo is already provided and must be used in the design.",
+              "required": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        672
+      ],
+      "id": "a58bfa29-bea6-4bf5-87e2-d1c82a74f9fb",
+      "name": "Information Extractor"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/nano-banana/edit",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Key 7a233434-b20e-4d73-ac56-35fcdc4db19a:e63f3d98b3038d314d3c88c4cafd3a1b"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"prompt\": \"{{ $json.output['Image Prompt'] }}\",\n  \"image_urls\": [\n    \"{{ $('Code').item.json.url }}\"\n  ],\n  \"num_images\": 1,\n  \"output_format\": \"jpeg\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        528,
+        672
+      ],
+      "id": "8b53ca1c-47f5-4ea0-985b-e91adffa0550",
+      "name": "Nano 🍌"
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/nano-banana/requests/{{ $json.request_id }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Key 7a233434-b20e-4d73-ac56-35fcdc4db19a:e63f3d98b3038d314d3c88c4cafd3a1b"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        912,
+        672
+      ],
+      "id": "bac7dc22-9dd9-46c1-a32d-b74ea9a259e7",
+      "name": "Get Result",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.images[0].url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1104,
+        656
+      ],
+      "id": "41ea5479-a2c3-4782-9c82-d75c5de27e43",
+      "name": "Download Image"
+    },
+    {
+      "parameters": {
+        "amount": 12
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        736,
+        672
+      ],
+      "id": "44ad1f2f-3f26-4786-b316-49df3423c4f3",
+      "name": "Waitz",
+      "webhookId": "caad73e3-58d8-4fbd-a3e9-c42424f2d1ee"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5",
+          "mode": "list",
+          "cachedResultName": "gpt-5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        864
+      ],
+      "id": "57a8cef4-1aaa-4aa0-9814-5abae60f5c7e",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "NCgfFmhZp4QKm05P",
+          "name": "OpenAi account 4"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "Nano 🍌",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Nano 🍌": {
+      "main": [
+        [
+          {
+            "node": "Waitz",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Result": {
+      "main": [
+        [
+          {
+            "node": "Download Image",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Waitz",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Image": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Waitz": {
+      "main": [
+        [
+          {
+            "node": "Get Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Dhaka",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "tt2hBh1o1riBLwAQ"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "f4558154-7716-41e6-929e-05db7dee3864",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "createdAt": "2025-09-10T18:40:53.151Z",
+      "updatedAt": "2025-09-10T18:40:53.151Z",
+      "role": "workflow:owner",
+      "workflowId": "Yu01JOQP1f3Cg7BZ",
+      "projectId": "7rdDDhbUHXMT0K8Z"
+    }
+  ],
+  "tags": []
+}
